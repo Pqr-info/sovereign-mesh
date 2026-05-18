@@ -1,11 +1,11 @@
 # Sovereign Mesh CODEOWNERS
 # These owners will be requested for review on all PRs
 
-* @thealanphipps-del
+* @pqr-info
 
 # Core mesh infrastructure
-/memory_bus/     @thealanphipps-del
-/grpc_node/      @thealanphipps-del
-/proto/          @thealanphipps-del
-/tunnels/        @thealanphipps-del
-/docs/           @thealanphipps-del
+/memory_bus/     @pqr-info
+/grpc_node/      @pqr-info
+/proto/          @pqr-info
+/tunnels/        @pqr-info
+/docs/           @pqr-info
