@@ -1,0 +1,82 @@
+name: 🚀 Sovereign Mesh Deploy
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*.*.*' ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deploy target'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+jobs:
+  deploy:
+    name: Deploy Mesh
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'staging' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set deployment context
+        id: ctx
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            echo "DEPLOY_ENV=production" >> $GITHUB_OUTPUT
+            echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          else
+            echo "DEPLOY_ENV=${{ github.event.inputs.environment || 'staging' }}" >> $GITHUB_OUTPUT
+            echo "VERSION=${{ github.sha }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Show deployment plan
+        run: |
+          echo "========================================"
+          echo " 🌀 SOVEREIGN MESH DEPLOYMENT PLAN"
+          echo "========================================"
+          echo "  Environment : ${{ steps.ctx.outputs.DEPLOY_ENV }}"
+          echo "  Version     : ${{ steps.ctx.outputs.VERSION }}"
+          echo "  Triggered by: ${{ github.actor }}"
+          echo "  Commit      : ${{ github.sha }}"
+          echo "========================================"
+
+      - name: Package mesh components
+        run: |
+          echo "📦 Packaging sovereign mesh components..."
+          tar -czf sovereign-mesh-${{ steps.ctx.outputs.VERSION }}.tar.gz \
+            memory_bus/ grpc_node/ proto/ tunnels/ mesh_control.sh \
+            --exclude='**/__pycache__' --exclude='**/*.pyc'
+          ls -lh sovereign-mesh-*.tar.gz
+
+      - name: Upload deployment artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sovereign-mesh-${{ steps.ctx.outputs.VERSION }}
+          path: sovereign-mesh-*.tar.gz
+          retention-days: 30
+
+      - name: Create GitHub Release (tags only)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: sovereign-mesh-*.tar.gz
+          generate_release_notes: true
+          body: |
+            ## 🌀 Sovereign Mesh ${{ steps.ctx.outputs.VERSION }}
+
+            ### Mesh Components
+            - Memory Bus server
+            - gRPC Node + Web Server
+            - Proto definitions
+            - Tunnel configuration
+            - Mesh control scripts
+
+            ### Deployment
+            Deployed automatically from `main` branch on tag push.
