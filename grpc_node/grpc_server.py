@@ -16,6 +16,12 @@ import sqlite3
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 import sync_pb2
 import sync_pb2_grpc
+print(f"DEBUG: sync_pb2_grpc imported from: {sync_pb2_grpc.__file__}")
+
+# Force reload to ensure we get the latest generated code
+import importlib
+importlib.reload(sync_pb2_grpc)
+from sync_pb2_grpc import AgentToolUseServicer
 
 # --- AESTHETIC CONSTANTS ---
 BLUE = "\033[94m"
@@ -1392,6 +1398,7 @@ def serve():
 
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     sync_pb2_grpc.add_AgentSyncServicer_to_server(AgentSyncServicer(node_id), server)
+    sync_pb2_grpc.add_AgentToolUseServicer_to_server(AgentToolUseServicer(), server)
     server.add_insecure_port(f'[::]:{port}')
     
     log(f"Starting gRPC server on port {port}...", color=GREEN)
@@ -1405,6 +1412,27 @@ def serve():
         log("Stopping gRPC server...", color=GOLD)
         server.stop(0)
         log("Server stopped successfully.", color=GREEN)
+
+class AgentToolUseServicer(sync_pb2_grpc.AgentToolUseServicer):
+    def __init__(self):
+        log("ToolUse Servicer (Proxy) initialized", color=GOLD)
+        self.channel = grpc.insecure_channel("localhost:1112")
+        self.stub = sync_pb2_grpc.AgentToolUseStub(self.channel)
+
+    def ExecuteFilesystem(self, request, context):
+        return self.stub.ExecuteFilesystem(request)
+
+    def ExecuteWebAccess(self, request, context):
+        return self.stub.ExecuteWebAccess(request)
+
+    def ExecuteWikipedia(self, request, context):
+        return self.stub.ExecuteWikipedia(request)
+
+    def ExecuteBrowserAuth(self, request, context):
+        return self.stub.ExecuteBrowserAuth(request)
+
+    def ExecuteKeepAlive(self, request, context):
+        return self.stub.ExecuteKeepAlive(request)
 
 if __name__ == '__main__':
     serve()

@@ -1,6 +1,7 @@
 syntax = "proto3";
+option go_package = "github.com/pqr-info/sovereign-mesh/proto";
 
-package sovereign;
+package proto;
 
 service AgentSync {
     rpc Ping (PingRequest) returns (PingResponse);
@@ -32,6 +33,15 @@ service AgentSync {
     // Jetweb Time Machine & Forensic Decision Accounting RPCs
     rpc TimeTravelOverride (TimeTravelRequest) returns (TimeTravelResponse);
     rpc ForensicAudit (ForensicRequest) returns (ForensicResponse);
+}
+
+// AgentToolUse Service for Native Tooling
+service AgentToolUse {
+    rpc ExecuteFilesystem(FilesystemRequest) returns (FilesystemResponse);
+    rpc ExecuteWebAccess(WebAccessRequest) returns (WebAccessResponse);
+    rpc ExecuteWikipedia(WikipediaRequest) returns (WikipediaResponse);
+    rpc ExecuteBrowserAuth(BrowserAuthRequest) returns (BrowserAuthResponse);
+    rpc ExecuteKeepAlive(KeepAliveRequest) returns (KeepAliveResponse);
 }
 
 message PingRequest {
@@ -285,4 +295,56 @@ message ForensicNode {
 message ForensicResponse {
     repeated ForensicNode timeline_nodes = 1;
     string master_knowledge_dump = 2;
+}
+
+message FilesystemRequest {
+    string path = 1;
+    string action = 2; // "READ", "LIST", "WRITE"
+    string content = 3;
+}
+
+message FilesystemResponse {
+    string content = 1;
+    bool success = 2;
+    string error = 3;
+}
+
+message WebAccessRequest {
+    string url = 1;
+}
+
+message WebAccessResponse {
+    string html = 1;
+    bool success = 2;
+    string error = 3;
+}
+
+message WikipediaRequest {
+    string topic = 1;
+}
+
+message WikipediaResponse {
+    string summary = 1;
+    string url = 2;
+    bool success = 3;
+    string error = 4;
+}
+
+message BrowserAuthRequest {
+    string target_url = 1;
+}
+
+message BrowserAuthResponse {
+    bool success = 1;
+    string session_token = 2; // Or cookie path
+    string error = 3;
+}
+
+message KeepAliveRequest {
+    string session_id = 1;
+}
+
+message KeepAliveResponse {
+    bool active = 1;
+    string status = 2;
 }
