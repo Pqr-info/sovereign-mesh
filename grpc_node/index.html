@@ -880,7 +880,7 @@
             </div>
             <div class="indicator">
                 <div class="indicator-dot" style="background: var(--cyan); box-shadow: 0 0 8px var(--cyan);"></div>
-                <span>Active Nodes: 2 (Alienware / Antigravity)</span>
+                <span>Active Nodes: 3 (Laptop / Alienware / Yoga)</span>
             </div>
             <div class="indicator">
                 <span id="validation-badge" style="color: var(--green); font-weight: 700;">SECURE</span>
@@ -953,6 +953,22 @@
                     </div>
                     <div class="ticket-list" id="tickets-container" style="max-height: 250px; overflow-y: auto; gap: 8px;">
                         <!-- Dynamic -->
+                    </div>
+                </div>
+
+                <!-- PQR Marshall Islands DAO Tickets (CockroachDB) -->
+                <div class="glass-panel">
+                    <div class="panel-header">
+                        <div class="panel-title" style="color: var(--cyan);">
+                            <span>⚖️</span> PQR Sovereign DAO Registrar Tickets (CockroachDB)
+                        </div>
+                        <button class="btn-primary" style="padding: 6px 12px; font-size: 0.8rem; background: linear-gradient(135deg, var(--cyan), #3b82f6);" onclick="loadPQRTickets()">Refresh PQR Tickets</button>
+                    </div>
+                    <div style="font-size:0.8rem; color:var(--text-secondary); margin-bottom: 0.5rem; font-family:'JetBrains Mono', monospace;">
+                        DAO Registry: Distributed atomic tickets stored globally in CockroachDB (v23.1.13)
+                    </div>
+                    <div class="ticket-list" id="pqr-tickets-container" style="max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+                        <div style="text-align:center; padding:1rem; color:var(--text-secondary); font-size:0.9rem;">Connecting to PQR DAO registry...</div>
                     </div>
                 </div>
 
@@ -1064,7 +1080,7 @@
                     </div>
                     <div class="control-description">
                         Forge dynamic Dialect agents and append them to the 7-Layer pedigree ledger. Inherited traits are validated instantly.
-                        <a href="#" onclick="toggleView('docs'); selectDoc('architecture'); return false;" class="doc-reference-link">📖 Read 7-Layer Pedigree Specifications</a>
+                        <a href="#" onclick="toggleView('docs'); selectDoc('architecture'); return false;" class="doc-reference-link tooltip-trigger" data-tooltip="Pedigree Forge documentation: Explore how new autonomous agents inherit properties and constraints recursively across the 7 security and priority layers.">📖 Read 7-Layer Pedigree Specifications</a>
                     </div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                         <div class="form-group">
@@ -1133,8 +1149,13 @@
                     <div class="panel-header">
                         <div class="panel-title">
                             <span>🌌</span> Active Swarm Architecture Topology
+                            <span class="info-badge tooltip-trigger" data-tooltip="Topology Diagram: Displays all active registered agent nodes, their hierarchical Layer Level, Parent, and operational status in a grid layout.">i</span>
                         </div>
                         <span style="font-size: 0.8rem; color: var(--text-secondary);">Click card to select as Teleporter Source</span>
+                    </div>
+                    <div class="control-description" style="margin-bottom: 12px;">
+                        Interactive network topology map. Select any active node to load its operational state space directly into the Teleporter bay.
+                        <a href="#" onclick="toggleView('docs'); selectDoc('architecture'); return false;" class="doc-reference-link tooltip-trigger" data-tooltip="Network Architecture Manual: Review details on active node roles, consensus mechanisms, sync models, and network topology maps.">📖 View Swarm Network Architecture Manual</a>
                     </div>
                     <div class="manager-agent-grid" id="manager-agents-grid">
                         <!-- Dynamic grid elements loaded by loadManagerAgents -->
@@ -1162,7 +1183,7 @@
                     </div>
                     <div class="control-description">
                         Virtualize and shift the agent's active mind buffer instantly between local hypervisors using zero-copy <strong>/dev/shm</strong> memory mapping.
-                        <a href="#" onclick="toggleView('docs'); selectDoc('memory-bus'); return false;" class="doc-reference-link" style="color: var(--purple);">📖 View RAM Memory Bus Specifications</a>
+                        <a href="#" onclick="toggleView('docs'); selectDoc('memory-bus'); return false;" class="doc-reference-link tooltip-trigger" style="color: var(--purple);" data-tooltip="Memory Bus Specifications: Read the technical details of zero-copy state-space transfers using POSIX shared memory (/dev/shm) mapping.">📖 View RAM Memory Bus Specifications</a>
                     </div>
                     <div class="form-group">
                         <label for="teleport-source">
@@ -1181,6 +1202,7 @@
                         <div class="teleport-node-box">
                             <div class="teleport-node-option selected" id="opt-node-aurora" onclick="selectTeleportNode('AURORA-R9-SERVER')">AURORA-R9-SERVER</div>
                             <div class="teleport-node-option" id="opt-node-laptop" onclick="selectTeleportNode('LAPTOP-TRAINING-AGENT')">LAPTOP-TRAINING-AGENT</div>
+                            <div class="teleport-node-option" id="opt-node-antigravity" onclick="selectTeleportNode('ANTIGRAVITY-SERVER')">ANTIGRAVITY-SERVER</div>
                         </div>
                         <input type="hidden" id="teleport-target-node" value="AURORA-R9-SERVER">
                     </div>
@@ -1215,12 +1237,13 @@
                     <div class="panel-header">
                         <div class="panel-title">
                             <span>📊</span> Swarm Telemetry Indicators
+                            <span class="info-badge tooltip-trigger" data-tooltip="System Telemetry: Displays real-time operational status, active nodes, majority agreement ratio, and listening port specifications.">i</span>
                         </div>
                     </div>
                     <div style="display: flex; flex-direction: column; gap: 12px;">
                         <div style="display: flex; justify-content: space-between; font-size: 0.85rem; padding-bottom: 6px; border-bottom: 1px solid var(--border-color);">
                             <span style="color: var(--text-secondary);">Sovereign Nodes Active</span>
-                            <span style="font-weight: 700; color: var(--cyan);">2 (Aurora-R9 / Laptop)</span>
+                            <span style="font-weight: 700; color: var(--cyan);">3 (Laptop / Alienware / Yoga)</span>
                         </div>
                         <div style="display: flex; justify-content: space-between; font-size: 0.85rem; padding-bottom: 6px; border-bottom: 1px solid var(--border-color);">
                             <span style="color: var(--text-secondary);">System Consensus Ratio</span>
@@ -1233,6 +1256,9 @@
                         <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
                             <span style="color: var(--text-secondary);">Cryptographic Ledgers</span>
                             <span style="font-weight: 700; color: var(--green);">SECURE (mmap direct)</span>
+                        </div>
+                        <div style="margin-top: 5px; border-top: 1px solid var(--border-color); padding-top: 10px;">
+                            <a href="#" onclick="toggleView('docs'); selectDoc('grpc-api'); return false;" class="doc-reference-link tooltip-trigger" style="color: var(--cyan);" data-tooltip="gRPC API Documentation: Read details of bidirectional gRPC schemas, protobuf contracts, and network stream APIs.">📖 View gRPC API Documentation</a>
                         </div>
                     </div>
                 </div>
@@ -1377,6 +1403,59 @@
             } catch (err) {
                 console.error(err);
                 logToConsole(`Failed to load active tickets: ${err}`, 'error');
+            }
+        }
+
+        // Fetch dynamic PQR tickets from CockroachDB via REST 2.0 Bridge
+        async function loadPQRTickets() {
+            try {
+                const res = await fetch('/api/v2/pqr/tickets');
+                const response = await res.json();
+                const container = document.getElementById('pqr-tickets-container');
+                container.innerHTML = '';
+                
+                if (!response.success) {
+                    container.innerHTML = `<div style="text-align:center; padding:1rem; color:var(--rose); font-size:0.9rem;">${response.error.message}</div>`;
+                    return;
+                }
+                
+                const data = response.data || [];
+                if (data.length === 0) {
+                    container.innerHTML = `<div style="text-align:center; padding:1rem; color:var(--text-secondary); font-size:0.9rem;">No PQR tickets found in CockroachDB.</div>`;
+                    return;
+                }
+                
+                // Show latest first
+                data.forEach(t => {
+                    const card = document.createElement('div');
+                    card.className = `ticket-card ${t.status.toLowerCase().includes('reject') ? 'rejected' : t.status.toLowerCase().includes('complete') ? 'committed' : 'proposed'}`;
+                    
+                    const creatorLabel = t.creator ? t.creator : 'unknown-agent';
+                    const contentText = t.content ? t.content : (t.intent && t.intent.details ? t.intent.details : 'No detail text');
+                    const severity = t.intent && t.intent.severity ? t.intent.severity : 'NORMAL';
+                    const ticketType = t.intent && t.intent.type ? t.intent.type : 'GENERIC_TICKET';
+                    
+                    card.innerHTML = `
+                        <div class="ticket-meta">
+                            <span style="font-family:'JetBrains Mono', monospace; font-weight:700; color:var(--cyan);">PQR #${t.id.substring(0,8)} (${creatorLabel})</span>
+                            <span class="status-badge ${t.status.toLowerCase().includes('reject') ? 'rejected' : t.status.toLowerCase().includes('complete') ? 'committed' : 'proposed'}">${t.status}</span>
+                        </div>
+                        <div class="ticket-description">
+                            <strong>Type:</strong> <span style="color: var(--gold);">${ticketType}</span> | <strong>Severity:</strong> <span style="color: var(--rose);">${severity}</span>
+                            <div style="margin-top:4px; padding:6px; background:rgba(0,0,0,0.2); border-radius:4px; font-family:'JetBrains Mono', monospace; font-size:0.75rem; color:#e2e8f0;">
+                                ${contentText}
+                            </div>
+                        </div>
+                        <div class="ticket-meta">
+                            <span>Layer: ${t.layer || 2} | Assigned: ${t.assigned_to || 'UNASSIGNED'}</span>
+                            <span>${t.created_at.substring(0,19).replace('T', ' ')}</span>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (err) {
+                console.error(err);
+                logToConsole(`Failed to load PQR tickets: ${err}`, 'error');
             }
         }
 
@@ -1734,16 +1813,22 @@
         function selectTeleportNode(nodeId) {
             const optAurora = document.getElementById('opt-node-aurora');
             const optLaptop = document.getElementById('opt-node-laptop');
+            const optAntigravity = document.getElementById('opt-node-antigravity');
             const targetInput = document.getElementById('teleport-target-node');
+
+            optAurora.classList.remove('selected');
+            optLaptop.classList.remove('selected');
+            optAntigravity.classList.remove('selected');
 
             if (nodeId === 'AURORA-R9-SERVER') {
                 optAurora.classList.add('selected');
-                optLaptop.classList.remove('selected');
                 targetInput.value = 'AURORA-R9-SERVER';
-            } else {
+            } else if (nodeId === 'LAPTOP-TRAINING-AGENT') {
                 optLaptop.classList.add('selected');
-                optAurora.classList.remove('selected');
                 targetInput.value = 'LAPTOP-TRAINING-AGENT';
+            } else if (nodeId === 'ANTIGRAVITY-SERVER') {
+                optAntigravity.classList.add('selected');
+                targetInput.value = 'ANTIGRAVITY-SERVER';
             }
             logToConsole(`Selected teleporter target node: ${targetInput.value}`, 'info');
         }
@@ -1948,6 +2033,7 @@
         window.onload = () => {
             loadAgents();
             loadTickets();
+            loadPQRTickets();
             loadLedger();
             loadTransactions();
             logToConsole('Sovereign control panels synced and fully active. Shortcut (Ctrl+E / Cmd+E) enabled.', 'success');

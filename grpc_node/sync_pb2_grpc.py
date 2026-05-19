@@ -35,87 +35,87 @@ class AgentSyncStub(object):
             channel: A grpc.Channel.
         """
         self.Ping = channel.unary_unary(
-                '/sovereign.AgentSync/Ping',
+                '/proto.AgentSync/Ping',
                 request_serializer=sync__pb2.PingRequest.SerializeToString,
                 response_deserializer=sync__pb2.PingResponse.FromString,
                 _registered_method=True)
         self.SyncState = channel.unary_unary(
-                '/sovereign.AgentSync/SyncState',
+                '/proto.AgentSync/SyncState',
                 request_serializer=sync__pb2.StatePayload.SerializeToString,
                 response_deserializer=sync__pb2.SyncAck.FromString,
                 _registered_method=True)
         self.StreamInference = channel.unary_stream(
-                '/sovereign.AgentSync/StreamInference',
+                '/proto.AgentSync/StreamInference',
                 request_serializer=sync__pb2.InferenceRequest.SerializeToString,
                 response_deserializer=sync__pb2.InferenceChunk.FromString,
                 _registered_method=True)
         self.RemoteExecute = channel.unary_unary(
-                '/sovereign.AgentSync/RemoteExecute',
+                '/proto.AgentSync/RemoteExecute',
                 request_serializer=sync__pb2.CommandPayload.SerializeToString,
                 response_deserializer=sync__pb2.CommandResult.FromString,
                 _registered_method=True)
         self.CreateUser = channel.unary_unary(
-                '/sovereign.AgentSync/CreateUser',
+                '/proto.AgentSync/CreateUser',
                 request_serializer=sync__pb2.CreateUserRequest.SerializeToString,
                 response_deserializer=sync__pb2.UserResponse.FromString,
                 _registered_method=True)
         self.ChangePassword = channel.unary_unary(
-                '/sovereign.AgentSync/ChangePassword',
+                '/proto.AgentSync/ChangePassword',
                 request_serializer=sync__pb2.ChangePasswordRequest.SerializeToString,
                 response_deserializer=sync__pb2.UserResponse.FromString,
                 _registered_method=True)
         self.ManageGroup = channel.unary_unary(
-                '/sovereign.AgentSync/ManageGroup',
+                '/proto.AgentSync/ManageGroup',
                 request_serializer=sync__pb2.ManageGroupRequest.SerializeToString,
                 response_deserializer=sync__pb2.UserResponse.FromString,
                 _registered_method=True)
         self.ListUsers = channel.unary_unary(
-                '/sovereign.AgentSync/ListUsers',
+                '/proto.AgentSync/ListUsers',
                 request_serializer=sync__pb2.UserDirectoryRequest.SerializeToString,
                 response_deserializer=sync__pb2.UserDirectoryResponse.FromString,
                 _registered_method=True)
         self.SyncUsers = channel.unary_unary(
-                '/sovereign.AgentSync/SyncUsers',
+                '/proto.AgentSync/SyncUsers',
                 request_serializer=sync__pb2.SyncUsersRequest.SerializeToString,
                 response_deserializer=sync__pb2.UserResponse.FromString,
                 _registered_method=True)
         self.GetProcessDirectory = channel.unary_unary(
-                '/sovereign.AgentSync/GetProcessDirectory',
+                '/proto.AgentSync/GetProcessDirectory',
                 request_serializer=sync__pb2.ProcessDirectoryRequest.SerializeToString,
                 response_deserializer=sync__pb2.ProcessDirectoryResponse.FromString,
                 _registered_method=True)
         self.GetPortBindings = channel.unary_unary(
-                '/sovereign.AgentSync/GetPortBindings',
+                '/proto.AgentSync/GetPortBindings',
                 request_serializer=sync__pb2.PortBindingsRequest.SerializeToString,
                 response_deserializer=sync__pb2.PortBindingsResponse.FromString,
                 _registered_method=True)
         self.TeleportAgent = channel.unary_unary(
-                '/sovereign.AgentSync/TeleportAgent',
+                '/proto.AgentSync/TeleportAgent',
                 request_serializer=sync__pb2.TeleportRequest.SerializeToString,
                 response_deserializer=sync__pb2.TeleportResponse.FromString,
                 _registered_method=True)
         self.TracePedigree = channel.unary_unary(
-                '/sovereign.AgentSync/TracePedigree',
+                '/proto.AgentSync/TracePedigree',
                 request_serializer=sync__pb2.PedigreeRequest.SerializeToString,
                 response_deserializer=sync__pb2.PedigreeResponse.FromString,
                 _registered_method=True)
         self.ProposeSwarmMutation = channel.unary_unary(
-                '/sovereign.AgentSync/ProposeSwarmMutation',
+                '/proto.AgentSync/ProposeSwarmMutation',
                 request_serializer=sync__pb2.MutationRequest.SerializeToString,
                 response_deserializer=sync__pb2.MutationResponse.FromString,
                 _registered_method=True)
         self.QuerySwarmLedger = channel.unary_unary(
-                '/sovereign.AgentSync/QuerySwarmLedger',
+                '/proto.AgentSync/QuerySwarmLedger',
                 request_serializer=sync__pb2.LedgerQueryRequest.SerializeToString,
                 response_deserializer=sync__pb2.LedgerQueryResponse.FromString,
                 _registered_method=True)
         self.TimeTravelOverride = channel.unary_unary(
-                '/sovereign.AgentSync/TimeTravelOverride',
+                '/proto.AgentSync/TimeTravelOverride',
                 request_serializer=sync__pb2.TimeTravelRequest.SerializeToString,
                 response_deserializer=sync__pb2.TimeTravelResponse.FromString,
                 _registered_method=True)
         self.ForensicAudit = channel.unary_unary(
-                '/sovereign.AgentSync/ForensicAudit',
+                '/proto.AgentSync/ForensicAudit',
                 request_serializer=sync__pb2.ForensicRequest.SerializeToString,
                 response_deserializer=sync__pb2.ForensicResponse.FromString,
                 _registered_method=True)
@@ -322,9 +322,9 @@ def add_AgentSyncServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'sovereign.AgentSync', rpc_method_handlers)
+            'proto.AgentSync', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('sovereign.AgentSync', rpc_method_handlers)
+    server.add_registered_method_handlers('proto.AgentSync', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
@@ -345,7 +345,7 @@ class AgentSync(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/sovereign.AgentSync/Ping',
+            '/proto.AgentSync/Ping',
             sync__pb2.PingRequest.SerializeToString,
             sync__pb2.PingResponse.FromString,
             options,
@@ -372,7 +372,7 @@ class AgentSync(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/sovereign.AgentSync/SyncState',
+            '/proto.AgentSync/SyncState',
             sync__pb2.StatePayload.SerializeToString,
             sync__pb2.SyncAck.FromString,
             options,
@@ -399,7 +399,7 @@ class AgentSync(object):
         return grpc.experimental.unary_stream(
             request,
             target,
-            '/sovereign.AgentSync/StreamInference',
+            '/proto.AgentSync/StreamInference',
             sync__pb2.InferenceRequest.SerializeToString,
             sync__pb2.InferenceChunk.FromString,
             options,
@@ -426,7 +426,7 @@ class AgentSync(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/sovereign.AgentSync/RemoteExecute',
+            '/proto.AgentSync/RemoteExecute',
             sync__pb2.CommandPayload.SerializeToString,
             sync__pb2.CommandResult.FromString,
             options,
@@ -453,7 +453,7 @@ class AgentSync(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/sovereign.AgentSync/CreateUser',
+            '/proto.AgentSync/CreateUser',
             sync__pb2.CreateUserRequest.SerializeToString,
             sync__pb2.UserResponse.FromString,
             options,
@@ -480,7 +480,7 @@ class AgentSync(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/sovereign.AgentSync/ChangePassword',
+            '/proto.AgentSync/ChangePassword',
             sync__pb2.ChangePasswordRequest.SerializeToString,
             sync__pb2.UserResponse.FromString,
             options,
@@ -507,7 +507,7 @@ class AgentSync(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/sovereign.AgentSync/ManageGroup',
+            '/proto.AgentSync/ManageGroup',
             sync__pb2.ManageGroupRequest.SerializeToString,
             sync__pb2.UserResponse.FromString,
             options,
@@ -534,7 +534,7 @@ class AgentSync(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/sovereign.AgentSync/ListUsers',
+            '/proto.AgentSync/ListUsers',
             sync__pb2.UserDirectoryRequest.SerializeToString,
             sync__pb2.UserDirectoryResponse.FromString,
             options,
@@ -561,7 +561,7 @@ class AgentSync(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/sovereign.AgentSync/SyncUsers',
+            '/proto.AgentSync/SyncUsers',
             sync__pb2.SyncUsersRequest.SerializeToString,
             sync__pb2.UserResponse.FromString,
             options,
@@ -588,7 +588,7 @@ class AgentSync(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/sovereign.AgentSync/GetProcessDirectory',
+            '/proto.AgentSync/GetProcessDirectory',
             sync__pb2.ProcessDirectoryRequest.SerializeToString,
             sync__pb2.ProcessDirectoryResponse.FromString,
             options,
@@ -615,7 +615,7 @@ class AgentSync(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/sovereign.AgentSync/GetPortBindings',
+            '/proto.AgentSync/GetPortBindings',
             sync__pb2.PortBindingsRequest.SerializeToString,
             sync__pb2.PortBindingsResponse.FromString,
             options,
@@ -642,7 +642,7 @@ class AgentSync(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/sovereign.AgentSync/TeleportAgent',
+            '/proto.AgentSync/TeleportAgent',
             sync__pb2.TeleportRequest.SerializeToString,
             sync__pb2.TeleportResponse.FromString,
             options,
@@ -669,7 +669,7 @@ class AgentSync(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/sovereign.AgentSync/TracePedigree',
+            '/proto.AgentSync/TracePedigree',
             sync__pb2.PedigreeRequest.SerializeToString,
             sync__pb2.PedigreeResponse.FromString,
             options,
@@ -696,7 +696,7 @@ class AgentSync(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/sovereign.AgentSync/ProposeSwarmMutation',
+            '/proto.AgentSync/ProposeSwarmMutation',
             sync__pb2.MutationRequest.SerializeToString,
             sync__pb2.MutationResponse.FromString,
             options,
@@ -723,7 +723,7 @@ class AgentSync(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/sovereign.AgentSync/QuerySwarmLedger',
+            '/proto.AgentSync/QuerySwarmLedger',
             sync__pb2.LedgerQueryRequest.SerializeToString,
             sync__pb2.LedgerQueryResponse.FromString,
             options,
@@ -750,7 +750,7 @@ class AgentSync(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/sovereign.AgentSync/TimeTravelOverride',
+            '/proto.AgentSync/TimeTravelOverride',
             sync__pb2.TimeTravelRequest.SerializeToString,
             sync__pb2.TimeTravelResponse.FromString,
             options,
@@ -777,9 +777,256 @@ class AgentSync(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/sovereign.AgentSync/ForensicAudit',
+            '/proto.AgentSync/ForensicAudit',
             sync__pb2.ForensicRequest.SerializeToString,
             sync__pb2.ForensicResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+
+class AgentToolUseStub(object):
+    """AgentToolUse Service for Native Tooling
+    """
+
+    def __init__(self, channel):
+        """Constructor.
+
+        Args:
+            channel: A grpc.Channel.
+        """
+        self.ExecuteFilesystem = channel.unary_unary(
+                '/proto.AgentToolUse/ExecuteFilesystem',
+                request_serializer=sync__pb2.FilesystemRequest.SerializeToString,
+                response_deserializer=sync__pb2.FilesystemResponse.FromString,
+                _registered_method=True)
+        self.ExecuteWebAccess = channel.unary_unary(
+                '/proto.AgentToolUse/ExecuteWebAccess',
+                request_serializer=sync__pb2.WebAccessRequest.SerializeToString,
+                response_deserializer=sync__pb2.WebAccessResponse.FromString,
+                _registered_method=True)
+        self.ExecuteWikipedia = channel.unary_unary(
+                '/proto.AgentToolUse/ExecuteWikipedia',
+                request_serializer=sync__pb2.WikipediaRequest.SerializeToString,
+                response_deserializer=sync__pb2.WikipediaResponse.FromString,
+                _registered_method=True)
+        self.ExecuteBrowserAuth = channel.unary_unary(
+                '/proto.AgentToolUse/ExecuteBrowserAuth',
+                request_serializer=sync__pb2.BrowserAuthRequest.SerializeToString,
+                response_deserializer=sync__pb2.BrowserAuthResponse.FromString,
+                _registered_method=True)
+        self.ExecuteKeepAlive = channel.unary_unary(
+                '/proto.AgentToolUse/ExecuteKeepAlive',
+                request_serializer=sync__pb2.KeepAliveRequest.SerializeToString,
+                response_deserializer=sync__pb2.KeepAliveResponse.FromString,
+                _registered_method=True)
+
+
+class AgentToolUseServicer(object):
+    """AgentToolUse Service for Native Tooling
+    """
+
+    def ExecuteFilesystem(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ExecuteWebAccess(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ExecuteWikipedia(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ExecuteBrowserAuth(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ExecuteKeepAlive(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_AgentToolUseServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+            'ExecuteFilesystem': grpc.unary_unary_rpc_method_handler(
+                    servicer.ExecuteFilesystem,
+                    request_deserializer=sync__pb2.FilesystemRequest.FromString,
+                    response_serializer=sync__pb2.FilesystemResponse.SerializeToString,
+            ),
+            'ExecuteWebAccess': grpc.unary_unary_rpc_method_handler(
+                    servicer.ExecuteWebAccess,
+                    request_deserializer=sync__pb2.WebAccessRequest.FromString,
+                    response_serializer=sync__pb2.WebAccessResponse.SerializeToString,
+            ),
+            'ExecuteWikipedia': grpc.unary_unary_rpc_method_handler(
+                    servicer.ExecuteWikipedia,
+                    request_deserializer=sync__pb2.WikipediaRequest.FromString,
+                    response_serializer=sync__pb2.WikipediaResponse.SerializeToString,
+            ),
+            'ExecuteBrowserAuth': grpc.unary_unary_rpc_method_handler(
+                    servicer.ExecuteBrowserAuth,
+                    request_deserializer=sync__pb2.BrowserAuthRequest.FromString,
+                    response_serializer=sync__pb2.BrowserAuthResponse.SerializeToString,
+            ),
+            'ExecuteKeepAlive': grpc.unary_unary_rpc_method_handler(
+                    servicer.ExecuteKeepAlive,
+                    request_deserializer=sync__pb2.KeepAliveRequest.FromString,
+                    response_serializer=sync__pb2.KeepAliveResponse.SerializeToString,
+            ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+            'proto.AgentToolUse', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
+    server.add_registered_method_handlers('proto.AgentToolUse', rpc_method_handlers)
+
+
+ # This class is part of an EXPERIMENTAL API.
+class AgentToolUse(object):
+    """AgentToolUse Service for Native Tooling
+    """
+
+    @staticmethod
+    def ExecuteFilesystem(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/proto.AgentToolUse/ExecuteFilesystem',
+            sync__pb2.FilesystemRequest.SerializeToString,
+            sync__pb2.FilesystemResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ExecuteWebAccess(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/proto.AgentToolUse/ExecuteWebAccess',
+            sync__pb2.WebAccessRequest.SerializeToString,
+            sync__pb2.WebAccessResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ExecuteWikipedia(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/proto.AgentToolUse/ExecuteWikipedia',
+            sync__pb2.WikipediaRequest.SerializeToString,
+            sync__pb2.WikipediaResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ExecuteBrowserAuth(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/proto.AgentToolUse/ExecuteBrowserAuth',
+            sync__pb2.BrowserAuthRequest.SerializeToString,
+            sync__pb2.BrowserAuthResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ExecuteKeepAlive(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/proto.AgentToolUse/ExecuteKeepAlive',
+            sync__pb2.KeepAliveRequest.SerializeToString,
+            sync__pb2.KeepAliveResponse.FromString,
             options,
             channel_credentials,
             insecure,

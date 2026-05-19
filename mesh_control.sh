@@ -11,6 +11,11 @@ BOLD="\033[1m"
 
 SCRIPT_DIR="/home/aellok/sovereign_mesh"
 
+# Automatically activate virtual environment if present
+if [ -f "$SCRIPT_DIR/.venv/bin/activate" ]; then
+    source "$SCRIPT_DIR/.venv/bin/activate"
+fi
+
 function print_banner() {
     echo -e "${CYAN}"
     echo -e "   ▄████████  ▄██████▄     ▄█    █▄       ▄████████    ▄████████  ▄██████▄   ▄█  ███▄▄▄▄      ▄██████▄  "

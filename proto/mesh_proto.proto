@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package proto;
+option go_package = "github.com/pqr-info/sovereign-mesh/proto";
+
+service SovereignMesh {
+  // Agents register their presence and status
+  rpc Heartbeat(AgentHeartbeat) returns (Response);
+  
+  // Remote state synchronization (Proxy for memory bus)
+  rpc SyncState(StateUpdate) returns (Response);
+  
+  // Orchestration: Agents pull tasks from the controller
+  rpc RequestTask(TaskLease) returns (TaskAssignment);
+
+  // Cobalt Chrome Wallet API
+  rpc GetBalance(WalletRequest) returns (WalletResponse);
+  rpc StakeCoin(StakeRequest) returns (Response);
+}
+
+message AgentHeartbeat {
+  string agent_id = 1;
+  string address = 2;
+  string status = 3;
+  int32 intelligence_level = 4;
+}
+
+message StateUpdate {
+  string agent_id = 1;
+  double progress = 2;
+  bool active = 3;
+}
+
+message TaskLease { string agent_id = 1; }
+
+message TaskAssignment {
+  string task_id = 1;
+  string description = 2;
+}
+
+message Response {
+  bool success = 1;
+  string message = 2;
+}
+message WalletRequest {
+  string agent_id = 1;
+}
+
+message WalletResponse {
+  double balance = 1;
+  double staked = 2;
+}
+
+message StakeRequest {
+  string agent_id = 1;
+  double amount = 2;
+}

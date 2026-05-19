@@ -17,8 +17,8 @@ jobs:
 
       - name: Set up Python via uv
         uses: astral-sh/setup-uv@v3
-        with:
-          python-version: '3.14'
+        env:
+          UV_PYTHON: '3.11'
 
       - name: Install dependencies
         run: |
@@ -55,8 +55,8 @@ jobs:
 
       - name: Set up Python
         uses: astral-sh/setup-uv@v3
-        with:
-          python-version: '3.14'
+        env:
+          UV_PYTHON: '3.11'
 
       - name: Check memory bus imports
         run: |
