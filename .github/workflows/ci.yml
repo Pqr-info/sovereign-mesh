@@ -82,3 +82,21 @@ jobs:
               echo "  ⚠️  $dir: directory missing"
             fi
           done
+
+  go-build-and-test:
+    name: Go Build & Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
+
+      - name: Build Go codebase
+        run: go build ./...
+
+      - name: Run Go tests
+        run: go test -v ./...
