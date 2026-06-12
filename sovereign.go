@@ -12,6 +12,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/pqr-info/sovereign-mesh/addressing"
 	"github.com/pqr-info/sovereign-mesh/proto"
 	"golang.org/x/telemetry/counter"
 	"google.golang.org/grpc"
@@ -27,12 +28,15 @@ func NewController(projectID, location string) *Controller {
 		ledger:        make([]*LedgerBlock, 0),
 		tasks:         make(chan string, 100),
 		optTasks:      make(chan OptimizationTask, 100),
+		arbitrageCh:   make(chan HFTArbitrageSignal, 1024),
 		metrics:       make(map[string]uint64),
 		projectID:     projectID,
 		storageBucket: os.Getenv("SNAPSHOT_BUCKET"),
 		location:      location,
 		startTime:     time.Now().UTC(),
 	}
+
+	c.Address5D = addressing.NewAddress5D()
 
 	c.SeedGenesisBlock()
 	return c
@@ -91,6 +95,10 @@ func (c *Controller) Start(ctx context.Context) {
 			log.Printf("gRPC server stopped: %v", err)
 		}
 	}()
+
+	// Initialize and run the Arbitrage Daemon
+	arbitrageDaemon := NewArbitrageDaemon(c, c.arbitrageCh, "http://127.0.0.1:8082")
+	go arbitrageDaemon.Run()
 
 	go c.startHealthMonitor(ctx)
 	go c.startOrchestrator(ctx)

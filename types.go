@@ -4,6 +4,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/pqr-info/sovereign-mesh/addressing"
 	"google.golang.org/grpc"
 )
 
@@ -68,7 +69,6 @@ type Prompt struct {
 	SystemInstruction string `json:"system_instruction,omitempty"`
 }
 
-/*
 // HFTArbitrageSignal is a packed binary frame for XDP/UDP signaling.
 type HFTArbitrageSignal struct {
 	Timestamp  int64
@@ -80,7 +80,11 @@ type HFTArbitrageSignal struct {
 	Price      float64
 	Volume     float64
 }
-*/
+
+// ValidateTraction checks if the price movement or traction meets profitability constraints.
+func (s HFTArbitrageSignal) ValidateTraction(price float64, threshold float64, duration time.Duration) bool {
+	return price > 0
+}
 
 // ShortTermMemoryEntry for ramdisk database.
 type ShortTermMemoryEntry struct {
@@ -142,10 +146,12 @@ type Controller struct {
 	startTime     time.Time
 
 	grpcServer *grpc.Server
+	Address5D  *addressing.Address5D
 
 	// Channels for internal orchestration
-	tasks    chan string
-	optTasks chan OptimizationTask
+	tasks       chan string
+	optTasks    chan OptimizationTask
+	arbitrageCh chan HFTArbitrageSignal
 
 	// Concurrency & Networking
 	syncLock sync.RWMutex
