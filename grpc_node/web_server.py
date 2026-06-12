@@ -82,6 +82,8 @@ class SwarmDashboardHandler(http.server.BaseHTTPRequestHandler):
             self.send_header("Content-type", "text/html")
             self.end_headers()
             index_path = os.path.join(frontend_dist, "index.html")
+            if not os.path.exists(index_path):
+                index_path = os.path.join(SCRIPT_DIR, "index.html")
             with open(index_path, "rb") as f:
                 self.wfile.write(f.read())
             return
@@ -367,7 +369,6 @@ class SwarmDashboardHandler(http.server.BaseHTTPRequestHandler):
         # 6.5. REST 2.0 - PQR Federated Ticketing Bridge
         elif path == "/api/v2/pqr/tickets":
             import urllib.request
-
             gateway_url = os.environ.get("PQR_GATEWAY_URL", "http://127.0.0.1:8082")
             try:
                 # Query the Balanced PQR REST 2.0 gateway
@@ -542,7 +543,6 @@ class SwarmDashboardHandler(http.server.BaseHTTPRequestHandler):
 
         elif path == "/api/v2/pqr/health":
             import urllib.request
-
             gateway_url = os.environ.get("PQR_GATEWAY_URL", "http://127.0.0.1:8082")
             try:
                 # Query the Balanced PQR REST 2.0 gateway health

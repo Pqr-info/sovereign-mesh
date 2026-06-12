@@ -1,7 +1,7 @@
 // ==============================================================================
-# SOVEREIGN-27: STRATUM-STYLE DISTRIBUTED INFERENCE POOL SERVER
-# Coordinates mobile NPU edge nodes as distributed inference workers (miners)
-# ==============================================================================
+// SOVEREIGN-27: STRATUM-STYLE DISTRIBUTED INFERENCE POOL SERVER
+// Coordinates mobile NPU edge nodes as distributed inference workers (miners)
+// ==============================================================================
 
 package sovereign
 

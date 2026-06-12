@@ -32,7 +32,7 @@ func TestStratumServerLifecycle(t *testing.T) {
 
 	// 3. Send subscription request (inference.subscribe)
 	subReq := `{"id":1,"method":"inference.subscribe","params":["Galaxy-S25-FE","NPU-v2"]}`
-	fmt.Fprintf(conn, subReq+"\n")
+	fmt.Fprint(conn, subReq+"\n")
 
 	line, err := reader.ReadBytes('\n')
 	if err != nil {
@@ -76,7 +76,7 @@ func TestStratumServerLifecycle(t *testing.T) {
 
 	// 5. Submit an evaluated token share (inference.submit)
 	submitReq := fmt.Sprintf(`{"id":2,"method":"inference.submit","params":["%s","%s",[0.98,0.01,0.01]]}`, workerID, jobID)
-	fmt.Fprintf(conn, submitReq+"\n")
+	fmt.Fprint(conn, submitReq+"\n")
 
 	submitLine, err := reader.ReadBytes('\n')
 	if err != nil {

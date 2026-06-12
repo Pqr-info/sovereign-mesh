@@ -20,6 +20,17 @@ The swarm's collective intelligence is mapped to a strict 7-layer relational ped
 
 ---
 
+## ⚖️ The PQR Federated Digital Registry Integration
+
+The Sovereign Swarm's decentralized operation is legally anchored and structurally enforced by the **PQR (Pre-Qualified Registrar) Stack**, a Marshall Islands DAO LLC. The integration couples physical-legal sovereignty with algorithmic mesh execution:
+
+*   **PQR Registrar Layer**: Serves as the ultimate ledger of node qualifications, IP/copyright registers, and the Marshall Islands `.mh` root DNS authority.
+*   **CockroachDB Multi-Node Fabric**: Acts as the swarm's global, long-term atomic persistent database, serving REST 2.0 dynamic ticketing API endpoints on port `8196` (local fallback `8257`).
+*   **Ticketing & Secret Escrow**: Leverages HashiCorp Vault (Port `8200`) to manage the Gemini Emergency key, SAML federated single-sign-on credentials, and zero-trust Cloudflare Access certificates across all active laptop and remote VM environments.
+*   **Algorithmic Bidirectional Bridge**: The Python gRPC Control Bus (Port `1111`) maps consensus state transitions directly into CockroachDB PQR tickets under a unified **4/5 majority vote** with complete forensic audit logs.
+
+---
+
 ## 🗳️ Swarm Consensus Mechanics
 
 Direct mutations to the Master Knowledge memory database cannot be performed unilaterally. Every proposed state modification initiates a transaction ticket that is submitted to a **Consensus Evaluation Panel** composed of 5 representative Layer 2/3 agents:

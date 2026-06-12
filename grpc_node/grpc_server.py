@@ -984,7 +984,12 @@ class AgentSyncServicer(sync_pb2_grpc.AgentSyncServicer):
 
         # Normalize agent_id mappings to match seeded Layer 7 nodes
         if (
-            agent_id not in ["LAPTOP-TRAINING-AGENT", "AURORA-R9-SERVER"]
+            agent_id
+            not in [
+                "LAPTOP-TRAINING-AGENT",
+                "AURORA-R9-SERVER",
+                "ANTIGRAVITY-SERVER",
+            ]
             and agent_id != "AGENT-0"
         ):
             if agent_id == self.node_id:
@@ -1326,6 +1331,65 @@ RESEARCH SIMULATION MATRIX:
 
             conn.commit()
             conn.close()
+
+            # Dynamic Federated PQR Sync Trigger: Propagate to CockroachDB Global Registry
+            pqr_status = "PENDING"
+            if status == "COMMITTED":
+                pqr_status = "COMPLETED"
+            elif status.startswith("REJECTED"):
+                pqr_status = "REJECTED"
+
+            pqr_intent = {
+                "type": "SWARM_MUTATION",
+                "severity": "NORMAL" if consensus_reached else "WARNING",
+                "key": target_key,
+                "proposed_value": proposed_value,
+                "consensus_ratio": consensus_ratio,
+                "votes": [{"agent_id": v.agent_id, "vote_agree": v.vote_agree, "rationale": v.rationale} for v in votes]
+            }
+
+            try:
+                import urllib.request
+                import os
+                gateway_url = os.environ.get("PQR_GATEWAY_URL", "http://127.0.0.1:8082")
+                pqr_payload = {
+                    "Subject": f"Mutation: {target_key}={proposed_value}",
+                    "Queue": "Swarm-Mutations",
+                    "Text": f"Proposer: {proposer}\nReason: {reason}\nConsensus: {consensus_ratio}\nBlock Index: {block_idx}",
+                    "AgentID": proposer,
+                    "Layer": 3,
+                    "Intent": pqr_intent
+                }
+                
+                # 1. Create Ticket (sets status to PENDING)
+                req_create = urllib.request.Request(
+                    f"{gateway_url}/REST/2.0/ticket",
+                    data=json.dumps(pqr_payload).encode('utf-8'),
+                    headers={"Content-Type": "application/json", "User-Agent": "Sovereign-Mesh-Sync/2.0"}
+                )
+                with urllib.request.urlopen(req_create, timeout=3) as resp_create:
+                    res_bytes = resp_create.read()
+                    res_json = json.loads(res_bytes.decode('utf-8'))
+                    pqr_ticket_uuid = res_json.get("id")
+                    log(f"PQR SYNC: Ticket created in CockroachDB PQR Registrar with UUID {pqr_ticket_uuid}", color=GREEN)
+                
+                # 2. Update Ticket to complete/reject status
+                if pqr_ticket_uuid:
+                    pqr_update_payload = {
+                        "Status": pqr_status,
+                        "Title": f"Mutation: {target_key}={proposed_value}",
+                        "Creator": proposer
+                    }
+                    req_update = urllib.request.Request(
+                        f"{gateway_url}/REST/2.0/ticket/{pqr_ticket_uuid}",
+                        data=json.dumps(pqr_update_payload).encode('utf-8'),
+                        headers={"Content-Type": "application/json", "User-Agent": "Sovereign-Mesh-Sync/2.0"},
+                        method="PUT"
+                    )
+                    with urllib.request.urlopen(req_update, timeout=3) as resp_update:
+                        log(f"PQR SYNC: Ticket {pqr_ticket_uuid} status updated to {pqr_status} in CockroachDB.", color=GREEN)
+            except Exception as sync_err:
+                log(f"PQR SYNC WARNING: Could not propagate ticket to PQR Gateway: {sync_err}", color=RED)
         except Exception as e:
             log(f"Failed to record mutation in database: {e}", color=RED)
             status = f"FAILED: {e}"
@@ -2198,6 +2262,14 @@ def initialize_pedigree_db():
                 (
                     "AURORA-R9-SERVER",
                     "Aurora R9 Server Agent",
+                    "AGENT-SHM-ALLOC",
+                    7,
+                    "Remote Action",
+                    "gRPC / SSH Server plane",
+                ),
+                (
+                    "ANTIGRAVITY-SERVER",
+                    "Antigravity Swarm Server Agent",
                     "AGENT-SHM-ALLOC",
                     7,
                     "Remote Action",
