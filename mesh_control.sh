@@ -16,6 +16,11 @@ if [ -f "$SCRIPT_DIR/.venv/bin/activate" ]; then
     source "$SCRIPT_DIR/.venv/bin/activate"
 fi
 
+PYTHON_BIN="python3"
+if [ -x "$SCRIPT_DIR/.venv/bin/python3" ]; then
+    PYTHON_BIN="$SCRIPT_DIR/.venv/bin/python3"
+fi
+
 function print_banner() {
     echo -e "${CYAN}"
     echo -e "   ▄████████  ▄██████▄     ▄█    █▄       ▄████████    ▄████████  ▄██████▄   ▄█  ███▄▄▄▄      ▄██████▄  "
@@ -70,15 +75,18 @@ function start_servers() {
     fi
     
     echo -e "Launching gRPC Server (Port 1111) in background..."
-    nohup python3 -u $SCRIPT_DIR/grpc_node/grpc_server.py > /tmp/grpc_server.log 2>&1 &
+    setsid $PYTHON_BIN -u $SCRIPT_DIR/grpc_node/grpc_server.py > /tmp/grpc_server.log 2>&1 &
+    disown
     GRPC_PID=$!
     
     echo -e "Launching Memory Bus Server (Port 11111) in background..."
-    nohup python3 -u $SCRIPT_DIR/memory_bus/server.py > /tmp/memory_bus.log 2>&1 &
+    setsid $PYTHON_BIN -u $SCRIPT_DIR/memory_bus/server.py > /tmp/memory_bus.log 2>&1 &
+    disown
     BUS_PID=$!
 
-    echo -e "Launching Swarm Dashboard Web Server (Port 8080) in background..."
-    nohup python3 -u $SCRIPT_DIR/grpc_node/web_server.py > /tmp/web_server.log 2>&1 &
+    echo -e "Launching Swarm Dashboard Web Server (Port 8085) in background..."
+    setsid $PYTHON_BIN -u $SCRIPT_DIR/grpc_node/web_server.py > /tmp/web_server.log 2>&1 &
+    disown
     WEB_PID=$!
     
     sleep 2
@@ -86,13 +94,13 @@ function start_servers() {
     # Verify they running
     PORT_1111=$(ss -tln | grep -q :1111 && echo "Active" || echo "Inactive")
     PORT_11111=$(ss -tln | grep -q :11111 && echo "Active" || echo "Inactive")
-    PORT_8080=$(ss -tln | grep -q :8080 && echo "Active" || echo "Inactive")
+    PORT_8085=$(ss -tln | grep -q :8085 && echo "Active" || echo "Inactive")
     
-    if [ "$PORT_1111" = "Active" ] && [ "$PORT_11111" = "Active" ] && [ "$PORT_8080" = "Active" ]; then
+    if [ "$PORT_1111" = "Active" ] && [ "$PORT_11111" = "Active" ] && [ "$PORT_8085" = "Active" ]; then
         echo -e "${GREEN}SUCCESS: Sovereign Mesh & Web Portal are online and listening!${RESET}"
         echo -e " - gRPC Server Engine: PID $GRPC_PID (Logs: /tmp/grpc_server.log)"
         echo -e " - Memory Bus Engine : PID $BUS_PID (Logs: /tmp/memory_bus.log)"
-        echo -e " - Swarm Web Portal  : PID $WEB_PID (Port: 8080, Logs: /tmp/web_server.log)"
+        echo -e " - Swarm Web Portal  : PID $WEB_PID (Port: 8085, Logs: /tmp/web_server.log)"
     else
         echo -e "${RED}ERROR: Failed to initialize servers. Check logs in /tmp${RESET}"
     fi
@@ -101,10 +109,10 @@ function start_servers() {
 function stop_servers() {
     echo -e "${BOLD}[STOPPING MESH SERVERS]${RESET}"
     
-    # Query PIDs holding port 1111, 11111 and 8080
+    # Query PIDs holding port 1111, 11111 and 8085
     GRPC_PIDS=$(lsof -t -i:1111 2>/dev/null)
     BUS_PIDS=$(lsof -t -i:11111 2>/dev/null)
-    WEB_PIDS=$(lsof -t -i:8080 2>/dev/null)
+    WEB_PIDS=$(lsof -t -i:8085 2>/dev/null)
     
     if [ -n "$GRPC_PIDS" ]; then
         echo -e "Terminating gRPC Server (PIDs: $GRPC_PIDS)..."
@@ -135,7 +143,7 @@ function check_status() {
     
     PORT_1111=$(ss -tln | grep -q :1111 && echo "ACTIVE" || echo "INACTIVE")
     PORT_11111=$(ss -tln | grep -q :11111 && echo "ACTIVE" || echo "INACTIVE")
-    PORT_8080=$(ss -tln | grep -q :8080 && echo "ACTIVE" || echo "INACTIVE")
+    PORT_8085=$(ss -tln | grep -q :8085 && echo "ACTIVE" || echo "INACTIVE")
     
     if [ "$PORT_1111" = "ACTIVE" ]; then
         echo -e " - gRPC Control Bus (Port 1111)    : ${GREEN}${BOLD}ONLINE${RESET}"
@@ -149,10 +157,10 @@ function check_status() {
         echo -e " - HighSpeed RAM Bus (Port 11111)  : ${RED}${BOLD}OFFLINE${RESET}"
     fi
 
-    if [ "$PORT_8080" = "ACTIVE" ]; then
-        echo -e " - Swarm Web Portal (Port 8080)    : ${GREEN}${BOLD}ONLINE${RESET}"
+    if [ "$PORT_8085" = "ACTIVE" ]; then
+        echo -e " - Swarm Web Portal (Port 8085)    : ${GREEN}${BOLD}ONLINE${RESET}"
     else
-        echo -e " - Swarm Web Portal (Port 8080)    : ${RED}${BOLD}OFFLINE${RESET}"
+        echo -e " - Swarm Web Portal (Port 8085)    : ${RED}${BOLD}OFFLINE${RESET}"
     fi
     
     echo -e ""
