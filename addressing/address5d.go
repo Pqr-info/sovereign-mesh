@@ -1,6 +1,8 @@
 package addressing
 
 import (
+	"crypto/sha1"
+	"encoding/binary"
 	"fmt"
 	"time"
 )
@@ -18,7 +20,16 @@ func (c Address5DCoord) String() string {
 }
 
 type Address5D struct {
-	// config, scaling factors, etc.
+	NodeID    string `json:"node_id"`    // D1
+	RoleID    string `json:"role_id"`    // D2
+	LineageID string `json:"lineage_id"` // D3
+	BlockID   string `json:"block_id"`   // D4
+	ThreadID  string `json:"thread_id"`  // D5
+}
+
+func (a Address5D) String() string {
+	return a.NodeID + "|" + a.RoleID + "|" + a.LineageID + "|" +
+		a.BlockID + "|" + a.ThreadID
 }
 
 func NewAddress5D() *Address5D {
@@ -27,13 +38,17 @@ func NewAddress5D() *Address5D {
 
 // Resolve maps an asset identifier + timestamp into a bounded 5-D coordinate.
 func (a *Address5D) Resolve(assetID string, ts time.Time) Address5DCoord {
-	// Simple deterministic placeholder; you can replace with your real mapping.
 	t := ts.UnixNano()
+
+	// Hash assetID for stable high-entropy mapping
+	h := sha1.Sum([]byte(assetID))
+	v := binary.BigEndian.Uint64(h[:8])
+
 	return Address5DCoord{
-		X:   int64(len(assetID)) % 1024,
-		Y:   (t / 1e6) % 1024,
-		Z:   (t / 1e3) % 1024,
-		T:   t,
-		Psi: (t / 1e9) % 27,
+		X:   int64(v % 1024),       // stable per asset
+		Y:   int64((t / 1e6) % 1024), // ms bucket
+		Z:   int64((t / 1e3) % 1024), // µs bucket
+		T:   t,                     // raw nanoseconds
+		Psi: int64(v % 27),         // stable phase index
 	}
 }
