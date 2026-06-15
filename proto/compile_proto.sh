@@ -19,7 +19,14 @@ mv -f proto/sync.pb.go proto/sync_grpc.pb.go $TARGET_DIR/
 mv -f proto/mesh_proto.pb.go proto/mesh_proto_grpc.pb.go $TARGET_DIR/
 
 # Python generation
-python3 -m grpc_tools.protoc \
+PYTHON_BIN="python3"
+if [ -x "../.venv/bin/python3" ]; then
+    PYTHON_BIN="../.venv/bin/python3"
+elif [ -x ".venv/bin/python3" ]; then
+    PYTHON_BIN=".venv/bin/python3"
+fi
+
+$PYTHON_BIN -m grpc_tools.protoc \
     -Iproto \
     --python_out=grpc_node \
     --grpc_python_out=grpc_node \
