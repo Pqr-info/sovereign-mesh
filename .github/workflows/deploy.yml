@@ -19,6 +19,8 @@ jobs:
   deploy:
     name: Deploy Mesh
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     environment: ${{ github.event.inputs.environment || 'staging' }}
 
     steps:
