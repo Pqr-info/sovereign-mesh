@@ -51,8 +51,8 @@ jobs:
         run: |
           echo "📦 Packaging sovereign mesh components..."
           tar -czf sovereign-mesh-${{ steps.ctx.outputs.VERSION }}.tar.gz \
-            memory_bus/ grpc_node/ proto/ tunnels/ mesh_control.sh \
-            --exclude='**/__pycache__' --exclude='**/*.pyc'
+            --exclude='**/__pycache__' --exclude='**/*.pyc' \
+            memory_bus/ grpc_node/ proto/ tunnels/ mesh_control.sh
           ls -lh sovereign-mesh-*.tar.gz
 
       - name: Upload deployment artifact
