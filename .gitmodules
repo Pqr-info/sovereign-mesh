@@ -1,0 +1,3 @@
+[submodule "amln-sen"]
+	path = amln-sen
+	url = ./amln-sen
