@@ -1,0 +1,8 @@
+name = "surfgo-core"
+main = "src/index.js"
+compatibility_date = "2024-03-12"
+
+# This binds your code to the KV database
+[[kv_namespaces]]
+binding = "WAITING_LIST"
+id = "" # Cloudflare will auto-fill this during the GitHub import, or you can paste your KV ID here.
