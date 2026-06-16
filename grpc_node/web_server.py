@@ -1040,24 +1040,45 @@ if __name__ == "__main__":
     cert_path = "certs/pqr.info.fullchain.pem"
     key_path = "certs/pqr.info.key"
 
-    with socketserver.TCPServer(("", PORT), handler) as httpd:
-        if os.path.exists(cert_path) and os.path.exists(key_path):
-            print(f"[WEB-SERVER] 🔐 SSL ACTIVE: pqr.info certificates detected.")
-            context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-            context.load_cert_chain(certfile=cert_path, keyfile=key_path)
-            httpd.socket = context.wrap_socket(httpd.socket, server_side=True)
-            print(
-                f"[WEB-SERVER] HTTPS Sovereign Swarm control workspace listening on port {PORT}..."
-            )
-        else:
-            print(f"[WEB-SERVER] ⚠️ SSL INACTIVE: Defaulting to HTTP.")
-            print(
-                f"[WEB-SERVER] HTTP Sovereign Swarm control workspace listening on port {PORT}..."
-            )
+    import threading
+    import subprocess
+    
+    bind_ips = ["127.0.0.1"]
+    try:
+        for ip in subprocess.check_output(["hostname", "-I"]).decode().split():
+            if ip.startswith("192.168.12."):
+                bind_ips.append(ip)
+    except Exception:
+        pass
 
+    def serve_on(ip):
         try:
-            httpd.serve_forever()
-        except KeyboardInterrupt:
-            print("\n[WEB-SERVER] Stopping dashboard server...")
-            httpd.server_close()
-            sys.exit(0)
+            with socketserver.TCPServer((ip, PORT), handler) as httpd:
+                if os.path.exists(cert_path) and os.path.exists(key_path):
+                    print(f"[WEB-SERVER] 🔐 SSL ACTIVE on {ip}: pqr.info certificates detected.")
+                    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+                    context.load_cert_chain(certfile=cert_path, keyfile=key_path)
+                    httpd.socket = context.wrap_socket(httpd.socket, server_side=True)
+                    print(
+                        f"[WEB-SERVER] HTTPS Sovereign Swarm control workspace listening on {ip}:{PORT}..."
+                    )
+                else:
+                    print(f"[WEB-SERVER] ⚠️ SSL INACTIVE on {ip}: Defaulting to HTTP.")
+                    print(
+                        f"[WEB-SERVER] HTTP Sovereign Swarm control workspace listening on {ip}:{PORT}..."
+                    )
+                httpd.serve_forever()
+        except Exception as e:
+            print(f"[WEB-SERVER] Error serving on {ip}:{PORT}: {e}")
+
+    for ip in set(bind_ips):
+        t = threading.Thread(target=serve_on, args=(ip,), daemon=True)
+        t.start()
+
+    try:
+        import time
+        while True:
+            time.sleep(86400)
+    except KeyboardInterrupt:
+        print("\n[WEB-SERVER] Stopping dashboard server...")
+        sys.exit(0)

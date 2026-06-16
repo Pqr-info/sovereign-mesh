@@ -20,6 +20,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
+	"strings"
 )
 
 // NewController creates a new instance of the Sovereign Mesh engine.
@@ -258,9 +259,39 @@ func (c *Controller) Start(ctx context.Context) {
 
 	// Respect Cloud Run dynamic port assignment
 	port := "1113" // Dedicated native tool-use port
-	lis, err := net.Listen("tcp", ":"+port)
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+
+	// Find all IPs to bind to (localhost and 192.168.12.0/24 only)
+	var bindIPs []string
+	bindIPs = append(bindIPs, "127.0.0.1")
+
+	ifaces, err := net.Interfaces()
+	if err == nil {
+		for _, iface := range ifaces {
+			addrs, err := iface.Addrs()
+			if err != nil {
+				continue
+			}
+			for _, addr := range addrs {
+				var ip net.IP
+				switch v := addr.(type) {
+				case *net.IPNet:
+					ip = v.IP
+				case *net.IPAddr:
+					ip = v.IP
+				}
+				if ip != nil && ip.To4() != nil {
+					ipStr := ip.String()
+					if strings.HasPrefix(ipStr, "192.168.12.") {
+						bindIPs = append(bindIPs, ipStr)
+					}
+				}
+			}
+		}
+	}
+
+	uniqueIPs := make(map[string]bool)
+	for _, ip := range bindIPs {
+		uniqueIPs[ip] = true
 	}
 
 	c.grpcServer = grpc.NewServer()
@@ -272,12 +303,19 @@ func (c *Controller) Start(ctx context.Context) {
 	proto.RegisterAgentToolUseServer(c.grpcServer, &ToolUseServer{})
 	reflection.Register(c.grpcServer)
 
-	go func() {
-		log.Printf("📡 Sovereign Cloud Run Instance active on :%s", port)
-		if err := c.grpcServer.Serve(lis); err != nil {
-			log.Printf("gRPC server stopped: %v", err)
+	for ip := range uniqueIPs {
+		lis, err := net.Listen("tcp", net.JoinHostPort(ip, port))
+		if err != nil {
+			log.Printf("failed to listen on %s:%s: %v", ip, port, err)
+			continue
 		}
-	}()
+		go func(l net.Listener, ipAddress string) {
+			log.Printf("📡 Sovereign Cloud Run Instance active on %s:%s", ipAddress, port)
+			if err := c.grpcServer.Serve(l); err != nil {
+				log.Printf("gRPC server stopped on %s: %v", ipAddress, err)
+			}
+		}(lis, ip)
+	}
 
 	// Initialize and run the Arbitrage Daemon
 	arbitrageDaemon := NewArbitrageDaemon(c, c.arbitrageCh, "http://127.0.0.1:8082")

@@ -185,35 +185,50 @@ def run_server():
 
     mapped_memory, file_handle = initialize_shared_memory()
 
-    # Create listening TCP Socket with high-performance opts
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    # Enable TCP_NODELAY for minimum latency (disable Nagle's algorithm)
+    import subprocess
+
+    bind_ips = ["127.0.0.1"]
     try:
-        server_socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+        for ip in subprocess.check_output(["hostname", "-I"]).decode().split():
+            if ip.startswith("192.168.12."):
+                bind_ips.append(ip)
     except Exception:
         pass
 
-    server_socket.bind(("0.0.0.0", port))
-    server_socket.listen(5)
-    log(f"High-Speed RAM Bus listening on TCP Port {port}...", color=GREEN)
+    def listen_on_ip(ip):
+        try:
+            server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            try:
+                server_socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+            except Exception:
+                pass
+            server_socket.bind((ip, port))
+            server_socket.listen(5)
+            log(f"High-Speed RAM Bus listening on TCP Port {ip}:{port}...", color=GREEN)
+            while True:
+                client_sock, client_addr = server_socket.accept()
+                t = threading.Thread(
+                    target=handle_client_connection,
+                    args=(client_sock, client_addr, mapped_memory),
+                    daemon=True,
+                )
+                t.start()
+        except Exception as e:
+            log(f"Error on {ip}:{port}: {e}", color=RED)
+
+    for ip in set(bind_ips):
+        t = threading.Thread(target=listen_on_ip, args=(ip,), daemon=True)
+        t.start()
 
     try:
         while True:
-            client_sock, client_addr = server_socket.accept()
-            # Handle in a dedicated high speed thread
-            t = threading.Thread(
-                target=handle_client_connection,
-                args=(client_sock, client_addr, mapped_memory),
-                daemon=True,
-            )
-            t.start()
+            time.sleep(86400)
     except KeyboardInterrupt:
         log("Shutting down memory bus...", color=GOLD)
     finally:
         mapped_memory.close()
         file_handle.close()
-        server_socket.close()
         log("Memory bus stopped.", color=GREEN)
 
 

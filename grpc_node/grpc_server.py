@@ -2443,7 +2443,17 @@ def serve():
     sync_pb2_grpc.add_NeuralTrainingServicer_to_server(NeuralTrainingServicer(), server)
     sync_pb2_grpc.add_SovereignCityServicer_to_server(SovereignCityServicer(), server)
     sync_pb2_grpc.add_AgentToolUseServicer_to_server(AgentToolUseServicer(), server)
-    server.add_insecure_port(f"[::]:{port}")
+    bind_ips = ["127.0.0.1"]
+    try:
+        import subprocess
+        for ip in subprocess.check_output(["hostname", "-I"]).decode().split():
+            if ip.startswith("192.168.12."):
+                bind_ips.append(ip)
+    except Exception:
+        pass
+    for ip in set(bind_ips):
+        server.add_insecure_port(f"{ip}:{port}")
+        log(f"gRPC port bound to: {ip}:{port}", color=GREEN)
 
     log(f"Starting gRPC server on port {port}...", color=GREEN)
     server.start()
