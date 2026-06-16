@@ -236,6 +236,11 @@ class AgentSyncServicer(sync_pb2_grpc.AgentSyncServicer):
             )
 
     def RemoteExecute(self, request, context):
+        import os
+        if os.getuid() == 0:
+            log("SECURITY VIOLATION: RemoteExecute blocked under root context!", color=RED, prefix="SECURITY")
+            return sync_pb2.CommandResult(exit_code=-1, stdout="", stderr="Execution denied: RemoteExecute cannot run under root context.")
+
         cmd = request.command
         args = list(request.args)
         full_command = [cmd] + args
@@ -257,6 +262,7 @@ class AgentSyncServicer(sync_pb2_grpc.AgentSyncServicer):
         except Exception as e:
             log(f"Execution failed: {e}", color=RED)
             return sync_pb2.CommandResult(exit_code=-1, stdout="", stderr=str(e))
+
 
     def CreateUser(self, request, context):
         username = request.username
