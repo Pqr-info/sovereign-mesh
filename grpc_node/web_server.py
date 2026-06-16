@@ -526,27 +526,6 @@ class SwarmDashboardHandler(http.server.BaseHTTPRequestHandler):
             }
             self.send_json_response(topology)
 
-        elif path == "/api/v2/amln/status":
-            import urllib.request
-            try:
-                response = urllib.request.urlopen("http://localhost:8080/governance/node", timeout=2)
-                data = json.loads(response.read().decode())
-                self.send_json_response({"success": True, "data": data})
-            except Exception as e:
-                self.send_json_response({"success": False, "error": str(e)})
-            return
-
-        elif path == "/api/v2/amln/evolution":
-            import urllib.request
-            try:
-                response = urllib.request.urlopen("http://localhost:8080/governance/evolution", timeout=2)
-                data = json.loads(response.read().decode())
-                self.send_json_response({"success": True, "data": data})
-            except Exception as e:
-                self.send_json_response({"success": False, "error": str(e)})
-            return
-
-
         elif path == "/api/v2/forensic/report-repair":
             # Automatic Error -> Ticket Bridge
             import json
@@ -735,6 +714,18 @@ class SwarmDashboardHandler(http.server.BaseHTTPRequestHandler):
                     },
                 }
             self.send_json_response(response)
+            return
+
+        elif path == "/api/v2/tritcast/anchors":
+            anchors_path = "/home/aellok/sovereign_mesh/anchors.json"
+            anchors_data = []
+            if os.path.exists(anchors_path):
+                try:
+                    with open(anchors_path, "r", encoding="utf-8") as f:
+                        anchors_data = json.load(f)
+                except Exception as e:
+                    print(f"[ERROR-READING-ANCHORS] {e}")
+            self.send_json_response(anchors_data)
             return
 
         else:
@@ -958,6 +949,61 @@ class SwarmDashboardHandler(http.server.BaseHTTPRequestHandler):
                     "error": {"code": "MGSH_EXEC_FAILED", "message": str(e)},
                 }
             self.send_json_response(response_data)
+            return
+
+        elif self.path == "/api/v2/tritcast/anchors":
+            title = payload.get("title", "Unnamed Anchor")
+            content = payload.get("content", "")
+            x = float(payload.get("x", 0.0))
+            y = float(payload.get("y", 0.0))
+            z = float(payload.get("z", 0.0))
+            t = float(payload.get("t", 0.0))
+            v = float(payload.get("v", 0.0))
+            creator = payload.get("creator", "CREATOR-NODE")
+
+            # Deterministic Trit generation
+            import hashlib
+            alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_"
+            bands = []
+            for i in range(3):
+                round_seed = f"{title}:{content}:{x}:{y}:{z}:{t}:{v}:{i}".encode("utf-8")
+                round_hash = hashlib.sha256(round_seed).digest()
+                band_chars = []
+                for byte in round_hash[:27]:
+                    band_chars.append(alphabet[byte % 27])
+                bands.append("".join(band_chars))
+            trit = f"{bands[0]}{bands[1]}{bands[2]}"
+
+            import datetime
+            new_anchor = {
+                "title": title,
+                "content": content,
+                "x": x,
+                "y": y,
+                "z": z,
+                "t": t,
+                "v": v,
+                "trit": trit,
+                "timestamp": datetime.datetime.now().isoformat(),
+                "creator": creator
+            }
+
+            anchors_path = "/home/aellok/sovereign_mesh/anchors.json"
+            anchors_data = []
+            if os.path.exists(anchors_path):
+                try:
+                    with open(anchors_path, "r", encoding="utf-8") as f:
+                        anchors_data = json.load(f)
+                except:
+                    pass
+            anchors_data.append(new_anchor)
+            try:
+                with open(anchors_path, "w", encoding="utf-8") as f:
+                    json.dump(anchors_data, f, indent=2)
+            except Exception as e:
+                print(f"[ERROR-SAVING-ANCHOR] {e}")
+
+            self.send_json_response({"success": True, "anchor": new_anchor})
             return
 
         else:

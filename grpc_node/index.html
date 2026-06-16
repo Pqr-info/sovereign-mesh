@@ -572,13 +572,13 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* 3-way toggle adjustments */
+        /* 4-way toggle adjustments */
         .view-toggle-container {
-            width: 440px !important;
+            width: 536px !important;
             flex-shrink: 0;
         }
         #toggle-active-bg {
-            width: 142px !important;
+            width: 128px !important;
         }
 
         /* Premium Floating Tooltip System */
@@ -855,6 +855,189 @@
             color: var(--text-primary);
             font-style: italic;
         }
+
+        /* TritCast Radio Panel Styling */
+        #tritcast-view {
+            display: none;
+            grid-template-columns: 320px 1fr 380px;
+            gap: 2rem;
+            width: 100%;
+            grid-column: 1 / -1;
+        }
+
+        .tritcast-radio-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(16px);
+        }
+
+        .radio-visualizer-box {
+            position: relative;
+            width: 100%;
+            height: 120px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(6, 182, 212, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .radio-visualizer-box canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .radio-status-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--cyan);
+            text-shadow: 0 0 8px rgba(6, 182, 212, 0.5);
+            text-align: center;
+            z-index: 10;
+        }
+
+        .audio-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .btn-audio-control {
+            background: none;
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-audio-control:hover {
+            border-color: var(--cyan);
+            box-shadow: 0 0 12px rgba(6, 182, 212, 0.4);
+            color: var(--cyan);
+        }
+
+        .btn-audio-control.playing {
+            background: linear-gradient(135deg, var(--cyan), var(--purple));
+            border: none;
+            box-shadow: 0 0 16px rgba(6, 182, 212, 0.6);
+        }
+
+        .barter-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            transition: border-color 0.3s;
+        }
+
+        .barter-card:hover {
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+
+        .barter-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            align-self: flex-start;
+        }
+
+        .barter-badge.gated {
+            background: rgba(244, 63, 94, 0.1);
+            color: var(--rose);
+            border: 1px solid rgba(244, 63, 94, 0.2);
+        }
+
+        .barter-badge.unlocked {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--green);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .trit-address-display {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px;
+            word-break: break-all;
+            color: var(--text-secondary);
+        }
+
+        .tritcast-mesh-canvas-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            min-height: 480px;
+            background: rgba(3, 7, 18, 0.4);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tritcast-mesh-canvas-container canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .telemetry-log-box {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem;
+            height: 300px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .telemetry-log-line {
+            display: flex;
+            gap: 8px;
+        }
+
+        .telemetry-log-time {
+            color: var(--text-secondary);
+            flex-shrink: 0;
+        }
+
+        .telemetry-log-agent {
+            color: var(--purple);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .telemetry-log-msg {
+            color: var(--text-primary);
+        }
     </style>
 </head>
 <body>
@@ -869,8 +1052,9 @@
         <div class="view-toggle-container">
             <div id="toggle-active-bg"></div>
             <button id="btn-editor-view" class="active tooltip-trigger tooltip-bottom" data-tooltip="Consensus ticket creator, active decision logs, time machine override, and live console." onclick="toggleView('editor')">Editor & Tickets</button>
-            <button id="btn-manager-view" class="tooltip-trigger tooltip-bottom" data-tooltip="Dynamic swarm node pedigree tree, real-time workload monitors, and spawning forge." onclick="toggleView('manager')">Open Agent Manager</button>
+            <button id="btn-manager-view" class="tooltip-trigger tooltip-bottom" data-tooltip="Dynamic swarm node pedigree tree, real-time workload monitors, and spawning forge." onclick="toggleView('manager')">Agent Manager</button>
             <button id="btn-docs-view" class="tooltip-trigger tooltip-bottom" data-tooltip="System manuals: 7-layer pedigree architecture, memory bus mechanics, gRPC API contracts." onclick="toggleView('docs')">Swarm Docs</button>
+            <button id="btn-tritcast-view" class="tooltip-trigger tooltip-bottom" data-tooltip="TritCast Radio: a podcast that is a website, a website that is a mesh, a mesh that is a sovereign economy." onclick="toggleView('tritcast')">TritCast Radio</button>
         </div>
 
         <div class="system-indicators">
@@ -1290,6 +1474,122 @@
                 </div>
             </div>
         </div>
+
+        <!-- TRITCAST RADIO & SOVEREIGN MESH VIEW -->
+        <div id="tritcast-view" style="display: none; grid-template-columns: 320px 1fr 380px; gap: 2rem; width: 100%; grid-column: 1 / -1;">
+            <!-- LEFT COLUMN: TritCast Radio Player & Swarm Logs -->
+            <div style="display: flex; flex-direction: column; gap: 2rem;">
+                <div class="tritcast-radio-panel">
+                    <div class="panel-header" style="margin-bottom: 0.5rem;">
+                        <div class="panel-title" style="color: var(--cyan); font-weight: 800; font-size: 1.15rem;">
+                            <span>📻</span> TRITCAST RADIO
+                        </div>
+                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--purple); letter-spacing: 1px;">pqr.info</span>
+                    </div>
+                    
+                    <div class="radio-visualizer-box">
+                        <canvas id="canvas-visualizer"></canvas>
+                        <div class="radio-status-text" id="radio-status">TUNE TO COGNITIVE FIELD</div>
+                    </div>
+                    
+                    <div class="audio-controls">
+                        <button class="btn-audio-control" id="btn-play-synth" onclick="toggleSynthPlayback()">▶</button>
+                        <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+                            <span style="font-size: 0.85rem; font-weight: 600;">Ambient Space Drone</span>
+                            <span style="font-size: 0.7rem; color: var(--text-secondary); font-family: 'JetBrains Mono', monospace;">Trit Resonance Synthesizer</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 64-Agent Swarm Tracker Logs -->
+                <div class="glass-panel" style="display: flex; flex-direction: column; flex: 1; min-height: 320px;">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <span>🤖</span> 64-Agent Swarm Tracker
+                        </div>
+                    </div>
+                    <div class="telemetry-log-box" id="swarm-tracker-logs">
+                        <!-- Filled dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- MIDDLE COLUMN: Hexagonal Nanowire Mesh Diagram -->
+            <div style="display: flex; flex-direction: column; gap: 2rem;">
+                <div class="tritcast-mesh-canvas-container">
+                    <canvas id="canvas-nanowire-mesh"></canvas>
+                </div>
+                
+                <div class="glass-panel" id="node-detail-panel">
+                    <div class="panel-header">
+                        <div class="panel-title" id="detail-title">Select a node from the mesh</div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div class="trit-address-display" id="detail-trit">Trit Address will appear here</div>
+                        <div style="font-size: 0.9rem; line-height: 1.4; color: var(--text-primary);" id="detail-content">Click on any hexagonal node in the nanowire mesh above to inspect its cryptographic anchor details and read its registered research content.</div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary); font-family: 'JetBrains Mono', monospace;">
+                            <span id="detail-creator">Creator: --</span>
+                            <span id="detail-coords">Coords: --</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: RO-NFT Minting Forge & Barter Marketplace -->
+            <div style="display: flex; flex-direction: column; gap: 2rem;">
+                <!-- RO-NFT Minting Forge -->
+                <div class="glass-panel">
+                    <div class="panel-header">
+                        <div class="panel-title" style="color: var(--cyan);">
+                            <span>🧬</span> RO-NFT Minting Forge
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div class="form-group">
+                            <label>Research Object Title</label>
+                            <input type="text" id="mint-title" placeholder="e.g. triple-helix-consensus-v2.md" style="width: 100%;">
+                        </div>
+                        <div class="form-group">
+                            <label>Research Content / Narrative</label>
+                            <textarea id="mint-content" placeholder="Describe your invention, code, or design. This will be encrypted and locked in the mesh." style="width: 100%; height: 80px; resize: none;"></textarea>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div class="form-group">
+                                <label>Coord X: <span id="val-x">0.0</span></label>
+                                <input type="range" id="coord-x" min="-100" max="100" value="0" step="0.1" oninput="document.getElementById('val-x').innerText=this.value">
+                            </div>
+                            <div class="form-group">
+                                <label>Coord Y: <span id="val-y">0.0</span></label>
+                                <input type="range" id="coord-x-y" min="-100" max="100" value="0" step="0.1" oninput="document.getElementById('val-y').innerText=this.value">
+                            </div>
+                            <div class="form-group">
+                                <label>Coord Z: <span id="val-z">0.0</span></label>
+                                <input type="range" id="coord-x-z" min="-100" max="100" value="0" step="0.1" oninput="document.getElementById('val-z').innerText=this.value">
+                            </div>
+                            <div class="form-group">
+                                <label>Vitality V: <span id="val-v">11.2</span></label>
+                                <input type="range" id="coord-x-v" min="0" max="20" value="11.2" step="0.1" oninput="document.getElementById('val-v').innerText=this.value">
+                            </div>
+                        </div>
+                        
+                        <button class="btn-primary" onclick="mintAnchorProposal()" style="background: linear-gradient(135deg, var(--cyan), var(--purple));">Mint RO-NFT Anchor</button>
+                    </div>
+                </div>
+
+                <!-- Barter Access Marketplace -->
+                <div class="glass-panel" style="display: flex; flex-direction: column; flex: 1;">
+                    <div class="panel-header">
+                        <div class="panel-title" style="color: var(--rose);">
+                            <span>⚖️</span> Barter Access Marketplace
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 12px; overflow-y: auto; max-height: 350px;" id="barter-marketplace-container">
+                        <!-- Filled dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
     <script>
@@ -1660,17 +1960,21 @@
             const btnEditor = document.getElementById('btn-editor-view');
             const btnManager = document.getElementById('btn-manager-view');
             const btnDocs = document.getElementById('btn-docs-view');
+            const btnTritcast = document.getElementById('btn-tritcast-view');
             const editorGrid = document.getElementById('editor-view');
             const managerGrid = document.getElementById('agent-manager-view');
             const docsGrid = document.getElementById('docs-hub-view');
+            const tritcastGrid = document.getElementById('tritcast-view');
 
             // Deactivate all
             btnEditor.classList.remove('active');
             btnManager.classList.remove('active');
             btnDocs.classList.remove('active');
+            btnTritcast.classList.remove('active');
             editorGrid.style.display = 'none';
             managerGrid.style.display = 'none';
             docsGrid.style.display = 'none';
+            tritcastGrid.style.display = 'none';
 
             if (view === 'editor') {
                 activeBg.style.transform = 'translateX(0)';
@@ -1678,32 +1982,41 @@
                 editorGrid.style.display = 'grid';
                 logToConsole('Switched view to Swarm Tickets & Timeline (Editor Mode)', 'info');
             } else if (view === 'manager') {
-                activeBg.style.transform = 'translateX(144px)';
+                activeBg.style.transform = 'translateX(132px)';
                 btnManager.classList.add('active');
                 managerGrid.style.display = 'grid';
                 logToConsole('Switched view to Mission Control (Open Agent Manager)', 'info');
                 loadManagerAgents();
-            } else {
-                activeBg.style.transform = 'translateX(288px)';
+            } else if (view === 'docs') {
+                activeBg.style.transform = 'translateX(264px)';
                 btnDocs.classList.add('active');
                 docsGrid.style.display = 'grid';
                 logToConsole('Switched view to System Manuals (Documentation Hub)', 'info');
                 loadDocs(); // Fetch manuals list
+            } else {
+                activeBg.style.transform = 'translateX(396px)';
+                btnTritcast.classList.add('active');
+                tritcastGrid.style.display = 'grid';
+                logToConsole('Switched view to TritCast Radio (Sovereign Nanowire Mesh)', 'info');
+                initTritcastView();
             }
         }
 
-        // Keyboard Shortcut Ctrl+E / Cmd+E toggler (cyclical through all 3 views)
+        // Keyboard Shortcut Ctrl+E / Cmd+E toggler (cyclical through all 4 views)
         window.addEventListener('keydown', (e) => {
             if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'e') {
                 e.preventDefault();
                 const editorGrid = document.getElementById('editor-view');
                 const managerGrid = document.getElementById('agent-manager-view');
                 const docsGrid = document.getElementById('docs-hub-view');
+                const tritcastGrid = document.getElementById('tritcast-view');
 
                 if (editorGrid.style.display !== 'none') {
                     toggleView('manager');
                 } else if (managerGrid.style.display !== 'none') {
                     toggleView('docs');
+                } else if (docsGrid.style.display !== 'none') {
+                    toggleView('tritcast');
                 } else {
                     toggleView('editor');
                 }
@@ -2027,6 +2340,634 @@
             } finally {
                 overlay.classList.remove('active');
             }
+        }
+
+        }
+
+        // ==============================================================================
+        // TRITCAST RADIO & SOVEREIGN MESH INTERACTION ENGINE
+        // ==============================================================================
+        let anchors = [];
+        let meshNodes = [];
+        let hoveredNode = null;
+        let selectedNode = null;
+        let meshCanvas = null;
+        let meshCtx = null;
+        let visualizerCanvas = null;
+        let visualizerCtx = null;
+        let visualizerAnimationId = null;
+        let rotationAngle = 0;
+        let isSynthPlaying = false;
+        let synthesizedAudioCtx = null;
+        let synthOscillators = [];
+        let synthLFO = null;
+        let synthFilter = null;
+
+        // Simulated Swarm Logs
+        const swarmAgents = [
+            "AGENT-001 (Progenitor)", "AGENT-002 (Consensus)", "AGENT-003 (Ledger)", 
+            "AGENT-004 (Topology)", "AGENT-005 (Telemetry)", "AGENT-006 (Forge)", 
+            "AGENT-007 (Audit)", "AGENT-SEC (Security)", "AGENT-TEL (Telemetry)"
+        ];
+        const swarmMessages = [
+            "Scanned new anchor {trit}",
+            "Extracted essence from Research Object '{title}'",
+            "Published teaser snippet for '{title}' to pqr.info feedback loop",
+            "Validated triple-helix signature for {trit}",
+            "Verified 5D coordinates mapping for {trit}",
+            "Calculated Vitality Factor of {vitality} for anchor '{title}'",
+            "Broadcasting node heartbeat metadata to Gossip Bus on Port 11111"
+        ];
+
+        // Gated Research Objects
+        let gatedObjects = [
+            {
+                id: "gate_1",
+                title: "Triple Helix Field Theory Part II.pdf",
+                description: "Deep dive into 5D trajectory deflection routing and golden ratio mathematical envelopes.",
+                x: -45.6, y: 99.1, z: -12.4, t: 1780899000, v: 14.5,
+                creator: "AGENT-001",
+                gated: true,
+                content: "UNLOCKED FIELD THEORY PART II:\n\nThe deflection routing function is stabilized by projecting the Vitality slope into a high-dimensional manifold: V = 27^(phi^-1) mod M.\nIf gradient collapse occurs, the sentinel SSH tunnel is automatically established to legacy mesh 39.mh to prevent replication latency."
+            },
+            {
+                id: "gate_2",
+                title: "Zero-Point Energy Resonance Map.md",
+                description: "Topology maps of nanowire mesh node connections and sub-millisecond shared-memory page swapping.",
+                x: 68.2, y: -12.4, z: 182.1, t: 1780942000, v: 11.2,
+                creator: "AGENT-004",
+                gated: true,
+                content: "UNLOCKED RESONANCE MAP:\n\nThe 16MB shared memory mapped at /dev/shm/sovereign_page_table allows zero-copy page swapping across local node clusters.\nTelemetry streaming verifies a peak shared-memory line speed of 252.69 MB/s, yielding a 10x throughput boost."
+            }
+        ];
+
+        function initTritcastView() {
+            // Setup Canvases
+            meshCanvas = document.getElementById('canvas-nanowire-mesh');
+            meshCtx = meshCanvas.getContext('2d');
+            visualizerCanvas = document.getElementById('canvas-visualizer');
+            visualizerCtx = visualizerCanvas.getContext('2d');
+
+            resizeCanvases();
+            window.addEventListener('resize', resizeCanvases);
+
+            // Fetch Anchors
+            loadAnchors();
+
+            // Populate Gated Objects
+            renderGatedMarketplace();
+
+            // Start Swarm Logs Simulator
+            if (!window.swarmLogInterval) {
+                // Populate initial logs
+                for (let i = 0; i < 15; i++) {
+                    addSwarmLog();
+                }
+                window.swarmLogInterval = setInterval(addSwarmLog, 3000);
+            }
+
+            // Start visualizer animation (idle mode if not playing)
+            if (!visualizerAnimationId) {
+                animateVisualizer();
+            }
+
+            // Set random coordinates on sliders
+            document.getElementById('coord-x').value = (Math.random() * 200 - 100).toFixed(1);
+            document.getElementById('coord-x-y').value = (Math.random() * 200 - 100).toFixed(1);
+            document.getElementById('coord-x-z').value = (Math.random() * 200 - 100).toFixed(1);
+            document.getElementById('val-x').innerText = document.getElementById('coord-x').value;
+            document.getElementById('val-y').innerText = document.getElementById('coord-x-y').value;
+            document.getElementById('val-z').innerText = document.getElementById('coord-x-z').value;
+        }
+
+        function resizeCanvases() {
+            if (meshCanvas) {
+                const rect = meshCanvas.parentElement.getBoundingClientRect();
+                meshCanvas.width = rect.width;
+                meshCanvas.height = rect.height;
+                drawMesh();
+            }
+            if (visualizerCanvas) {
+                const rect = visualizerCanvas.parentElement.getBoundingClientRect();
+                visualizerCanvas.width = rect.width;
+                visualizerCanvas.height = rect.height;
+            }
+        }
+
+        async function loadAnchors() {
+            try {
+                const res = await fetch('/api/v2/tritcast/anchors');
+                anchors = await res.json();
+                
+                // Build Mesh Nodes
+                meshNodes = anchors.map((a, idx) => {
+                    return {
+                        id: a.trit,
+                        title: a.title,
+                        content: a.content,
+                        x: a.x,
+                        y: a.y,
+                        z: a.z,
+                        t: a.t,
+                        v: a.v,
+                        trit: a.trit,
+                        creator: a.creator,
+                        timestamp: a.timestamp,
+                        // Visual coordinates mapped to canvas size
+                        canvasX: 0,
+                        canvasY: 0
+                    };
+                });
+                
+                mapNodesToCanvas();
+                drawMesh();
+                
+                // Set click handler on canvas
+                meshCanvas.onclick = handleMeshClick;
+                meshCanvas.onmousemove = handleMeshMouseMove;
+            } catch (err) {
+                console.error("Failed to load anchors:", err);
+                logToConsole("Error loading TritCast anchors.", "error");
+            }
+        }
+
+        function mapNodesToCanvas() {
+            if (!meshCanvas || meshNodes.length === 0) return;
+            const w = meshCanvas.width;
+            const h = meshCanvas.height;
+            const padding = 60;
+
+            // Find min/max of X and Y coordinates to map them
+            let minX = -100, maxX = 100;
+            let minY = -100, maxY = 100;
+            
+            meshNodes.forEach(node => {
+                if (node.x < minX) minX = node.x;
+                if (node.x > maxX) maxX = node.x;
+                if (node.y < minY) minY = node.y;
+                if (node.y > maxY) maxY = node.y;
+            });
+
+            // Map
+            meshNodes.forEach(node => {
+                const pctX = (node.x - minX) / (maxX - minX || 1);
+                const pctY = (node.y - minY) / (maxY - minY || 1);
+                node.canvasX = padding + pctX * (w - 2 * padding);
+                node.canvasY = padding + pctY * (h - 2 * padding);
+            });
+        }
+
+        function drawMesh() {
+            if (!meshCanvas || !meshCtx || meshNodes.length === 0) return;
+            meshCtx.clearRect(0, 0, meshCanvas.width, meshCanvas.height);
+
+            // Draw hexagonal grids in the background
+            meshCtx.strokeStyle = 'rgba(6, 182, 212, 0.03)';
+            meshCtx.lineWidth = 1;
+            const hexSize = 35;
+            for (let y = 0; y < meshCanvas.height + hexSize; y += hexSize * 1.5) {
+                for (let x = 0; x < meshCanvas.width + hexSize; x += hexSize * Math.sqrt(3)) {
+                    drawHexagon(meshCtx, x + (Math.floor(y / (hexSize * 1.5)) % 2) * (hexSize * Math.sqrt(3)/2), y, hexSize, false);
+                }
+            }
+
+            // Draw Nanowire Connections
+            meshCtx.lineWidth = 1.5;
+            meshCtx.shadowBlur = 0;
+            meshNodes.forEach((node, i) => {
+                // Connect each node to the next few nodes
+                for (let j = i + 1; j < meshNodes.length; j++) {
+                    const target = meshNodes[j];
+                    const dist = Math.hypot(node.canvasX - target.canvasX, node.canvasY - target.canvasY);
+                    
+                    // Alpha based on distance
+                    const maxDist = 300;
+                    if (dist < maxDist) {
+                        const alpha = (1 - dist / maxDist) * 0.25;
+                        meshCtx.strokeStyle = `rgba(139, 92, 246, ${alpha})`;
+                        meshCtx.beginPath();
+                        meshCtx.moveTo(node.canvasX, node.canvasY);
+                        meshCtx.lineTo(target.canvasX, target.canvasY);
+                        meshCtx.stroke();
+                        
+                        // Crawling light dash animation on connections
+                        if (isSynthPlaying) {
+                            const offset = (Date.now() / 20) % dist;
+                            const dashAlpha = (1 - dist / maxDist) * 0.6;
+                            meshCtx.strokeStyle = `rgba(6, 182, 212, ${dashAlpha})`;
+                            meshCtx.save();
+                            meshCtx.setLineDash([4, dist]);
+                            meshCtx.lineDashOffset = -offset;
+                            meshCtx.beginPath();
+                            meshCtx.moveTo(node.canvasX, node.canvasY);
+                            meshCtx.lineTo(target.canvasX, target.canvasY);
+                            meshCtx.stroke();
+                            meshCtx.restore();
+                        }
+                    }
+                }
+            });
+
+            // Draw Nodes
+            meshNodes.forEach(node => {
+                const isHovered = hoveredNode && hoveredNode.id === node.id;
+                const isSelected = selectedNode && selectedNode.id === node.id;
+                
+                meshCtx.save();
+                
+                // Colors
+                let color = 'rgba(6, 182, 212, 0.7)';
+                if (isSelected) {
+                    color = 'rgba(16, 185, 129, 0.9)'; // Green
+                    meshCtx.shadowColor = 'rgba(16, 185, 129, 0.8)';
+                    meshCtx.shadowBlur = 12;
+                } else if (isHovered) {
+                    color = 'rgba(139, 92, 246, 0.9)'; // Purple
+                    meshCtx.shadowColor = 'rgba(139, 92, 246, 0.7)';
+                    meshCtx.shadowBlur = 8;
+                } else {
+                    meshCtx.shadowColor = 'rgba(6, 182, 212, 0.4)';
+                    meshCtx.shadowBlur = 4;
+                }
+                
+                // Outer Hexagon
+                meshCtx.fillStyle = isSelected ? 'rgba(16, 185, 129, 0.15)' : (isHovered ? 'rgba(139, 92, 246, 0.1)' : 'rgba(3, 7, 18, 0.8)');
+                meshCtx.strokeStyle = color;
+                meshCtx.lineWidth = isSelected || isHovered ? 2.5 : 1.5;
+                
+                drawHexagon(meshCtx, node.canvasX, node.canvasY, 15, true);
+                
+                // Inner Dot
+                meshCtx.fillStyle = color;
+                meshCtx.beginPath();
+                meshCtx.arc(node.canvasX, node.canvasY, 3, 0, Math.PI * 2);
+                meshCtx.fill();
+                
+                // Label
+                meshCtx.shadowBlur = 0;
+                meshCtx.fillStyle = isSelected || isHovered ? '#fff' : 'var(--text-secondary)';
+                meshCtx.font = "bold 9px 'JetBrains Mono', monospace";
+                meshCtx.textAlign = 'center';
+                meshCtx.fillText(node.title, node.canvasX, node.canvasY + 28);
+                
+                meshCtx.restore();
+            });
+        }
+
+        function drawHexagon(ctx, x, y, r, fill = false) {
+            ctx.beginPath();
+            for (let i = 0; i < 6; i++) {
+                const angle = (Math.PI / 3) * i - (Math.PI / 6);
+                ctx.lineTo(x + r * Math.cos(angle), y + r * Math.sin(angle));
+            }
+            ctx.closePath();
+            if (fill) ctx.fill();
+            ctx.stroke();
+        }
+
+        function handleMeshMouseMove(e) {
+            const rect = meshCanvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            
+            let found = null;
+            meshNodes.forEach(node => {
+                const dist = Math.hypot(node.canvasX - mouseX, node.canvasY - mouseY);
+                if (dist < 18) {
+                    found = node;
+                }
+            });
+            
+            if (hoveredNode !== found) {
+                hoveredNode = found;
+                meshCanvas.style.cursor = found ? 'pointer' : 'default';
+                drawMesh();
+            }
+        }
+
+        function handleMeshClick(e) {
+            if (hoveredNode) {
+                selectedNode = hoveredNode;
+                drawMesh();
+                
+                // Show Node Details
+                document.getElementById('detail-title').innerText = selectedNode.title;
+                document.getElementById('detail-trit').innerText = selectedNode.trit;
+                document.getElementById('detail-content').innerText = selectedNode.content;
+                document.getElementById('detail-creator').innerText = `Creator: ${selectedNode.creator}`;
+                document.getElementById('detail-coords').innerText = `Coords: [X:${selectedNode.x.toFixed(1)}, Y:${selectedNode.y.toFixed(1)}, Z:${selectedNode.z.toFixed(1)}]`;
+                
+                logToConsole(`Inspected cryptographic anchor node: ${selectedNode.trit.substring(0, 16)}...`, 'info');
+            }
+        }
+
+        async function mintAnchorProposal() {
+            const titleInput = document.getElementById('mint-title');
+            const contentInput = document.getElementById('mint-content');
+            
+            if (!titleInput.value.trim() || !contentInput.value.trim()) {
+                logToConsole("Mint proposal rejected: Title and Content are required.", "warning");
+                return;
+            }
+
+            const payload = {
+                title: titleInput.value.trim(),
+                content: contentInput.value.trim(),
+                x: parseFloat(document.getElementById('coord-x').value),
+                y: parseFloat(document.getElementById('coord-x-y').value),
+                z: parseFloat(document.getElementById('coord-x-z').value),
+                t: Math.floor(Date.now() / 1000),
+                v: parseFloat(document.getElementById('coord-x-v').value),
+                creator: "AGENT-LOCAL"
+            };
+
+            try {
+                const res = await fetch('/api/v2/tritcast/anchors', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const response = await res.json();
+                
+                if (response.success) {
+                    const anchor = response.anchor;
+                    logToConsole(`Successfully minted RO-NFT! Trit: ${anchor.trit.substring(0, 20)}...`, 'success');
+                    
+                    // Clear inputs
+                    titleInput.value = '';
+                    contentInput.value = '';
+                    
+                    // Reload Anchors
+                    loadAnchors();
+                    
+                    // Pulse animation on canvas
+                    triggerMeshPulse();
+                } else {
+                    logToConsole(`Failed to mint RO-NFT: ${response.error.message}`, 'error');
+                }
+            } catch (err) {
+                console.error(err);
+                logToConsole("Minting failed: network connection issue.", "error");
+            }
+        }
+
+        function triggerMeshPulse() {
+            let pulseRadius = 0;
+            const maxPulse = 200;
+            
+            function runPulse() {
+                if (pulseRadius >= maxPulse) return;
+                pulseRadius += 8;
+                
+                drawMesh(); // Redraw base
+                
+                // Draw growing pulse wave at center
+                meshCtx.save();
+                meshCtx.strokeStyle = `rgba(16, 185, 129, ${1 - pulseRadius / maxPulse})`;
+                meshCtx.lineWidth = 2;
+                meshCtx.shadowColor = 'rgba(16, 185, 129, 0.5)';
+                meshCtx.shadowBlur = 10;
+                meshCtx.beginPath();
+                meshCtx.arc(meshCanvas.width / 2, meshCanvas.height / 2, pulseRadius, 0, Math.PI * 2);
+                meshCtx.stroke();
+                meshCtx.restore();
+                
+                requestAnimationFrame(runPulse);
+            }
+            runPulse();
+        }
+
+        // 64-Agent Swarm Tracker Log Simulator
+        function addSwarmLog() {
+            const logsBox = document.getElementById('swarm-tracker-logs');
+            if (!logsBox) return;
+
+            const timeStr = new Date().toLocaleTimeString();
+            const agent = swarmAgents[Math.floor(Math.random() * swarmAgents.length)];
+            
+            let template = swarmMessages[Math.floor(Math.random() * swarmMessages.length)];
+            let title = "mesh_handshake_payload.json";
+            let trit = "5alpha#HEXAGONAL_NANOWIRE_STRAND_RESONANCE_INDEX_NODE_Consensus";
+            let vitality = "11.2";
+
+            if (anchors.length > 0) {
+                const randomAnchor = anchors[Math.floor(Math.random() * anchors.length)];
+                title = randomAnchor.title;
+                trit = randomAnchor.trit;
+                vitality = randomAnchor.v.toFixed(1);
+            }
+
+            const msg = template
+                .replace("{title}", title)
+                .replace("{trit}", trit.substring(0, 24) + "...")
+                .replace("{vitality}", vitality);
+
+            const line = document.createElement('div');
+            line.className = 'telemetry-log-line';
+            line.innerHTML = `
+                <span class="telemetry-log-time">[${timeStr}]</span>
+                <span class="telemetry-log-agent">${agent}</span>
+                <span class="telemetry-log-msg">${msg}</span>
+            `;
+
+            logsBox.appendChild(line);
+            
+            // Limit logs list size
+            while (logsBox.children.length > 50) {
+                logsBox.removeChild(logsBox.firstChild);
+            }
+            logsBox.scrollTop = logsBox.scrollHeight;
+        }
+
+        // Barter Access Marketplace Rendering
+        function renderGatedMarketplace() {
+            const container = document.getElementById('barter-marketplace-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            gatedObjects.forEach(obj => {
+                const card = document.createElement('div');
+                card.className = 'barter-card';
+                
+                const badgeClass = obj.gated ? 'gated' : 'unlocked';
+                const badgeText = obj.gated ? 'GATED - BARTER REQ' : 'UNLOCKED';
+                
+                card.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: 700; font-size: 0.95rem; color: #fff;">${obj.title}</span>
+                        <span class="barter-badge ${badgeClass}">${badgeText}</span>
+                    </div>
+                    <p style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.3;">${obj.description}</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px; font-size: 0.75rem; color: var(--purple);">
+                        <span>Creator: ${obj.creator}</span>
+                        <span>Coords: [${obj.x}, ${obj.y}]</span>
+                    </div>
+                    ${obj.gated ? 
+                        `<button class="btn-primary" style="padding: 6px 12px; font-size: 0.8rem; margin-top: 6px; background: rgba(244, 63, 94, 0.15); border: 1px solid rgba(244, 63, 94, 0.3); color: var(--rose);" onclick="barterForAccess('${obj.id}')">Barter with RO-NFT</button>` :
+                        `<div style="background: rgba(0,0,0,0.3); border: 1px dashed var(--border-color); border-radius: 8px; padding: 10px; margin-top: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; white-space: pre-wrap; color: var(--green); word-break: break-all;">${obj.content}</div>`
+                    }
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function barterForAccess(id) {
+            // Check if user has minted any anchors
+            const userAnchors = anchors.filter(a => a.creator === 'AGENT-LOCAL');
+            if (userAnchors.length === 0) {
+                alert("Barter Rejected: You have not minted any local Research Object anchors yet! Access to gated works requires contribution. Mint an RO-NFT first, then barter.");
+                logToConsole("Barter rejected: local contribution (RO-NFT) required.", "warning");
+                return;
+            }
+
+            // Simple barter verification: trade the first available local anchor
+            const traded = userAnchors[0];
+            const obj = gatedObjects.find(o => o.id === id);
+            
+            if (obj) {
+                obj.gated = false;
+                renderGatedMarketplace();
+                logToConsole(`Barter complete! Traded local anchor '${traded.title}' to unlock gated Research Object '${obj.title}'.`, 'success');
+                alert(`Barter Successful!\n\nYou traded '${traded.title}'\nFor Access to: '${obj.title}'\n\nThe research has been decrypted and unlocked.`);
+            }
+        }
+
+        // TritCast Web Audio Ambient Synth & Wave Visualizer
+        function toggleSynthPlayback() {
+            const btn = document.getElementById('btn-play-synth');
+            if (!isSynthPlaying) {
+                // Initialize context
+                if (!synthesizedAudioCtx) {
+                    synthesizedAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+
+                // Ambient Drone Synth
+                const osc1 = synthesizedAudioCtx.createOscillator();
+                osc1.type = 'sawtooth';
+                osc1.frequency.setValueAtTime(55, synthesizedAudioCtx.currentTime); // A1
+
+                const osc2 = synthesizedAudioCtx.createOscillator();
+                osc2.type = 'sawtooth';
+                osc2.frequency.setValueAtTime(55.25, synthesizedAudioCtx.currentTime); // Detuned A1
+
+                const subOsc = synthesizedAudioCtx.createOscillator();
+                subOsc.type = 'triangle';
+                subOsc.frequency.setValueAtTime(27.5, synthesizedAudioCtx.currentTime); // Sub A0
+
+                synthFilter = synthesizedAudioCtx.createBiquadFilter();
+                synthFilter.type = 'lowpass';
+                synthFilter.frequency.setValueAtTime(150, synthesizedAudioCtx.currentTime);
+                synthFilter.Q.setValueAtTime(12, synthesizedAudioCtx.currentTime);
+
+                // slow LFO sweep
+                synthLFO = synthesizedAudioCtx.createOscillator();
+                synthLFO.frequency.setValueAtTime(0.12, synthesizedAudioCtx.currentTime); // Slow 0.12 Hz
+                const lfoGain = synthesizedAudioCtx.createGain();
+                lfoGain.gain.setValueAtTime(120, synthesizedAudioCtx.currentTime);
+
+                synthLFO.connect(lfoGain);
+                lfoGain.connect(synthFilter.frequency);
+
+                const gainNode = synthesizedAudioCtx.createGain();
+                gainNode.gain.setValueAtTime(0.12, synthesizedAudioCtx.currentTime); // Ambient soft gain
+
+                // Connect
+                osc1.connect(synthFilter);
+                osc2.connect(synthFilter);
+                subOsc.connect(synthFilter);
+                synthFilter.connect(gainNode);
+                gainNode.connect(synthesizedAudioCtx.destination);
+
+                osc1.start();
+                osc2.start();
+                subOsc.start();
+                synthLFO.start();
+
+                synthOscillators = [osc1, osc2, subOsc];
+                isSynthPlaying = true;
+                btn.innerHTML = '⏸';
+                btn.classList.add('playing');
+                document.getElementById('radio-status').innerText = 'TUNED TO ACTIVE COGNITIVE FIELD';
+                logToConsole('Synth core connected to mesh. Ambient TritCast broadcast active.', 'success');
+            } else {
+                // Stop synth
+                synthOscillators.forEach(osc => osc.stop());
+                synthOscillators = [];
+                if (synthLFO) {
+                    synthLFO.stop();
+                    synthLFO = null;
+                }
+                isSynthPlaying = false;
+                btn.innerHTML = '▶';
+                btn.classList.remove('playing');
+                document.getElementById('radio-status').innerText = 'TUNE TO COGNITIVE FIELD';
+                logToConsole('Synth core disconnected.', 'info');
+            }
+            drawMesh(); // Update crawler line dashboards
+        }
+
+        // Animate Visualizer (Triple Helix / Waveform)
+        function animateVisualizer() {
+            if (!visualizerCanvas || !visualizerCtx) return;
+            
+            visualizerCtx.clearRect(0, 0, visualizerCanvas.width, visualizerCanvas.height);
+            rotationAngle += isSynthPlaying ? 0.04 : 0.01;
+
+            const w = visualizerCanvas.width;
+            const h = visualizerCanvas.height;
+
+            if (isSynthPlaying) {
+                // Draw glowing, dynamic triple-helix wave strand
+                visualizerCtx.lineWidth = 1.5;
+                const time = Date.now() / 150;
+                
+                // Draw 3 phase-shifted strands of helix
+                for (let strand = 0; strand < 3; strand++) {
+                    const phaseOffset = (Math.PI * 2 / 3) * strand;
+                    visualizerCtx.beginPath();
+                    
+                    let color = 'rgba(6, 182, 212, 0.4)';
+                    if (strand === 1) color = 'rgba(139, 92, 246, 0.4)';
+                    if (strand === 2) color = 'rgba(16, 185, 129, 0.4)';
+                    visualizerCtx.strokeStyle = color;
+                    
+                    for (let x = 0; x < w; x++) {
+                        const y = h / 2 + Math.sin(x * 0.03 + time + phaseOffset) * 20 * Math.sin(x * 0.005);
+                        if (x === 0) {
+                            visualizerCtx.moveTo(x, y);
+                        } else {
+                            visualizerCtx.lineTo(x, y);
+                        }
+                    }
+                    visualizerCtx.stroke();
+                }
+
+                // Draw floating particles / bits
+                visualizerCtx.fillStyle = 'rgba(6, 182, 212, 0.6)';
+                for (let i = 0; i < 5; i++) {
+                    const px = (Date.now() / 10 + i * (w/5)) % w;
+                    const py = h/2 + Math.sin(px * 0.02 + time) * 15;
+                    visualizerCtx.beginPath();
+                    visualizerCtx.arc(px, py, 2, 0, Math.PI*2);
+                    visualizerCtx.fill();
+                }
+            } else {
+                // Flat line noise
+                visualizerCtx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+                visualizerCtx.lineWidth = 1.5;
+                visualizerCtx.beginPath();
+                for (let x = 0; x < w; x++) {
+                    const y = h / 2 + (Math.random() - 0.5) * 2;
+                    if (x === 0) {
+                        visualizerCtx.moveTo(x, y);
+                    } else {
+                        visualizerCtx.lineTo(x, y);
+                    }
+                }
+                visualizerCtx.stroke();
+            }
+
+            visualizerAnimationId = requestAnimationFrame(animateVisualizer);
         }
 
         // Initialize dashboard

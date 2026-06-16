@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"log"
+	"os/exec"
 	"time"
 
 	"github.com/pqr-info/sovereign-mesh/proto"
@@ -98,6 +99,25 @@ func (s *meshServer) StreamVitality(req *proto.TelemetryRequest, stream proto.Ag
 func (s *meshServer) SyncBlackhole(stream proto.AgentSync_SyncBlackholeServer) error {
 	log.Printf("🌑 BLACKHOLE SYNC: Bi-directional link established.")
 	return nil
+}
+
+func (s *meshServer) RemoteExecute(ctx context.Context, req *proto.CommandPayload) (*proto.CommandResult, error) {
+	log.Printf("🛰️ REMOTE EXECUTE (gRPC): %s %v", req.Command, req.Args)
+
+	cmd := exec.Command(req.Command, req.Args...)
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		return &proto.CommandResult{
+			ExitCode: -1,
+			Stdout:   string(out),
+			Stderr:   err.Error(),
+		}, nil
+	}
+
+	return &proto.CommandResult{
+		ExitCode: 0,
+		Stdout:   string(out),
+	}, nil
 }
 
 func (s *meshServer) ExecuteShell(ctx context.Context, req *proto.CommandPayload) (*proto.CommandResult, error) {

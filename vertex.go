@@ -34,6 +34,7 @@ func (c *Controller) OptimizePrompt(ctx context.Context, task OptimizationTask) 
 				ParameterValues: map[string]*structpb.Value{
 					"optimization_spec": params,
 				},
+				GcsOutputDirectory: fmt.Sprintf("gs://%s_cloudbuild/output", c.projectID),
 			},
 		},
 	}
