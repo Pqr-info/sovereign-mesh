@@ -20,7 +20,7 @@ import sync_pb2_grpc
 PORT = 8085
 
 # Initialize Firebase Admin SDK
-cred = credentials.Certificate("fast-web-key.json")
+cred = credentials.Certificate(os.path.join(os.path.dirname(SCRIPT_DIR), "fast-web-key.json"))
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 DB_PATH = "/home/aellok/sovereign_mesh/agent_pedigree.db"
