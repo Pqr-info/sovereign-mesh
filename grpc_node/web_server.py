@@ -526,6 +526,27 @@ class SwarmDashboardHandler(http.server.BaseHTTPRequestHandler):
             }
             self.send_json_response(topology)
 
+        elif path == "/api/v2/amln/status":
+            import urllib.request
+            try:
+                response = urllib.request.urlopen("http://localhost:8080/governance/node", timeout=2)
+                data = json.loads(response.read().decode())
+                self.send_json_response({"success": True, "data": data})
+            except Exception as e:
+                self.send_json_response({"success": False, "error": str(e)})
+            return
+
+        elif path == "/api/v2/amln/evolution":
+            import urllib.request
+            try:
+                response = urllib.request.urlopen("http://localhost:8080/governance/evolution", timeout=2)
+                data = json.loads(response.read().decode())
+                self.send_json_response({"success": True, "data": data})
+            except Exception as e:
+                self.send_json_response({"success": False, "error": str(e)})
+            return
+
+
         elif path == "/api/v2/forensic/report-repair":
             # Automatic Error -> Ticket Bridge
             import json
