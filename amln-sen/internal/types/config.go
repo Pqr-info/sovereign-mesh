@@ -5,6 +5,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -28,7 +29,8 @@ type Config struct {
 	PQREndpoint      string `json:"pqr_endpoint"`
 
 	// Autonomous Organism flags
-	ContinuousEvolution bool `json:"continuous_evolution"`
+	ContinuousEvolution bool          `json:"continuous_evolution"`
+	GossipTick          time.Duration `json:"gossip_tick"`
 }
 
 func LoadConfig() Config {
@@ -60,6 +62,9 @@ func LoadConfig() Config {
 	cfg.MeshIslandID = getEnvOrDefault("MESH_ISLAND_ID", "default-island")
 
 	cfg.ContinuousEvolution = getBoolOrDefault("CONTINUOUS_EVOLUTION", true)
+
+	gossipTickMs := getIntOrDefault("GOSSIP_TICK_MS", 1000)
+	cfg.GossipTick = time.Duration(gossipTickMs) * time.Millisecond
 
 	return cfg
 }

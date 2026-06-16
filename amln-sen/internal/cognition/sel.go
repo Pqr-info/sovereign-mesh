@@ -3,6 +3,7 @@ package cognition
 import (
 	"context"
 	"math"
+	"math/rand"
 	"time"
 
 	"amln-sen/internal/pqr"
@@ -125,4 +126,12 @@ func (s *SEL) AgenticWeight() float64 {
 
 	// Normalize to [0,1]
 	return mag / (1 + mag)
+}
+
+// InjectExplorationNoise injects noise to perturb the strategy vector.
+func (s *SEL) InjectExplorationNoise(scale float64) {
+	for i := range s.Strategy {
+		noise := (rand.Float64() - 0.5) * scale
+		s.Strategy[i] += noise
+	}
 }

@@ -39,13 +39,17 @@ func main() {
 	// Initialize REST API
 	router := api.NewRouter(engine, gossip, slingshot, consensus)
 
+	// Register gossiper with engine
+	engine.RegisterGossiper(gossip)
+
 	// Graceful shutdown context
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	if cfg.ContinuousEvolution {
-		log.Println("[AMLN-SEN] Continuous background evolution ENABLED, starting autonomous loop...")
+		log.Println("[AMLN-SEN] Continuous background evolution ENABLED, starting autonomous loops...")
 		engine.StartBackgroundEvolution(ctx)
+		engine.StartContinuousGossip(ctx)
 	}
 
 	go func() {

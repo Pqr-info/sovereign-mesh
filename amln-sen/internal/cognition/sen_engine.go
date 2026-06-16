@@ -3,8 +3,10 @@ package cognition
 import (
 	"context"
 	"sync"
+	"time"
 
 	"amln-sen/internal/crypto"
+	"amln-sen/internal/governance"
 	"amln-sen/internal/pqr"
 	"amln-sen/internal/types"
 )
@@ -27,6 +29,21 @@ type SENEngine struct {
 
 	// Crypto
 	signer *crypto.Signer
+
+	// Gossip integration
+	gossiper Gossiper
+
+	// Evolution Engine
+	evolution *EvolutionEngine
+
+	// Council of 5 Governance
+	council *governance.CouncilOfFive
+
+	// Governance Orchestrator
+	governanceOrchestrator *governance.GovernanceOrchestrator
+
+	// Teleportation Lockout Layer
+	teleportationManager *governance.TeleportationManager
 }
 
 // NewSENEngine constructs a new cognition engine.
@@ -51,7 +68,7 @@ func NewSENEngine(cfg types.Config, session *pqr.Session) (*SENEngine, error) {
 	
 	lineage := NewLineage(cfg.LineageVectorSize, 0.9) // λ = 0.9
 
-	return &SENEngine{
+	engine := &SENEngine{
 		cfg:     cfg,
 		session: session,
 		stmb:    stmb,
@@ -63,7 +80,23 @@ func NewSENEngine(cfg types.Config, session *pqr.Session) (*SENEngine, error) {
 		weight:  weight,
 		lineage: lineage,
 		signer:  signer,
-	}, nil
+	}
+
+	evolutionCfg := EvolutionConfig{
+		TickBase:          200 * time.Millisecond,
+		ExplorationScale:  0.01,
+		EnableSyntheticTx: true,
+		EnableAdaptive:    true,
+	}
+	engine.evolution = NewEvolutionEngine(engine, evolutionCfg)
+
+	engine.council = governance.NewDefaultCouncilOfFive()
+
+	engine.governanceOrchestrator = governance.NewGovernanceOrchestrator(cfg.StrategyVectorSize, 1000*time.Millisecond)
+
+	engine.teleportationManager = governance.NewTeleportationManager(engine.governanceOrchestrator.JailController)
+
+	return engine, nil
 }
 
 // Session exposes the underlying PQR session.
@@ -273,3 +306,30 @@ func (e *SENEngine) Shutdown(ctx context.Context) {
 
 	_ = e.sel.Persist(ctx)
 }
+
+// Start launches the continuous background evolution engine and governance orchestrator.
+func (e *SENEngine) Start(ctx context.Context) {
+	e.evolution.Start(ctx)
+	e.governanceOrchestrator.Start(ctx)
+}
+
+// StartBackgroundEvolution delegates to Start for backward compatibility.
+func (e *SENEngine) StartBackgroundEvolution(ctx context.Context) {
+	e.Start(ctx)
+}
+
+// Council returns the internal governance council.
+func (e *SENEngine) Council() *governance.CouncilOfFive {
+	return e.council
+}
+
+// GovernanceOrchestrator returns the internal orchestrator.
+func (e *SENEngine) GovernanceOrchestrator() *governance.GovernanceOrchestrator {
+	return e.governanceOrchestrator
+}
+
+// TeleportationManager returns the internal teleportation manager.
+func (e *SENEngine) TeleportationManager() *governance.TeleportationManager {
+	return e.teleportationManager
+}
+

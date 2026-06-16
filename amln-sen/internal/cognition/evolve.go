@@ -2,17 +2,37 @@ package cognition
 
 import (
 	"context"
-	"crypto/rand"
-	"encoding/binary"
-	"math/big"
+	"math/rand"
+	"runtime"
 	"time"
 )
 
-// StartBackgroundEvolution triggers the self-evolving loop in the background.
-func (e *SENEngine) StartBackgroundEvolution(ctx context.Context) {
+// EvolutionEngine drives continuous background evolution.
+type EvolutionEngine struct {
+	engine *SENEngine
+	cfg    EvolutionConfig
+}
+
+// EvolutionConfig controls evolution behavior.
+type EvolutionConfig struct {
+	TickBase          time.Duration // base tick (e.g., 200ms)
+	ExplorationScale  float64       // noise amplitude
+	EnableSyntheticTx bool          // allow synthetic research
+	EnableAdaptive    bool          // adapt tick to CPU load
+}
+
+// NewEvolutionEngine constructs the evolution subsystem.
+func NewEvolutionEngine(engine *SENEngine, cfg EvolutionConfig) *EvolutionEngine {
+	return &EvolutionEngine{
+		engine: engine,
+		cfg:    cfg,
+	}
+}
+
+// Start launches the continuous evolution loop.
+func (ev *EvolutionEngine) Start(ctx context.Context) {
 	go func() {
-		// Base interval is 200ms
-		ticker := time.NewTicker(200 * time.Millisecond)
+		ticker := time.NewTicker(ev.cfg.TickBase)
 		defer ticker.Stop()
 
 		for {
@@ -20,138 +40,167 @@ func (e *SENEngine) StartBackgroundEvolution(ctx context.Context) {
 			case <-ctx.Done():
 				return
 			case <-ticker.C:
-				// Adjust evolution interval dynamically based on compute capacity
-				cpuFactor := e.GetComputeCapacity()
-				dynamicInterval := time.Duration(200.0 / cpuFactor) * time.Millisecond
-				
-				// Perform evolution step
-				e.EvolveStep(ctx)
+				ev.step(ctx)
 
-				// Adjust ticker dynamically
-				ticker.Reset(dynamicInterval)
+				// Adjust tick if adaptive mode is enabled
+				if ev.cfg.EnableAdaptive {
+					load := ev.cpuLoad()
+					newTick := ev.adaptTick(load)
+					ticker.Reset(newTick)
+				}
 			}
 		}
 	}()
 }
 
-// GetComputeCapacity returns a scalar scaling factor representing available compute.
-// Energy surplus / idle periods -> evolution rates accelerate (factor > 1.0).
-func (e *SENEngine) GetComputeCapacity() float64 {
-	// In a real system, this queries OS CPU load or GPU metrics.
-	// We simulate a stable capacity factor of 1.25 (acceleration during idle surplus).
-	return 1.25
-}
+// ------------------------------------------------------------
+// Evolution Step
+// ------------------------------------------------------------
 
-// EvolveStep runs one tick of autonomous strategy evolution and noise perturbation.
-func (e *SENEngine) EvolveStep(ctx context.Context) {
-	e.mu.Lock()
-	defer e.mu.Unlock()
+func (ev *EvolutionEngine) step(ctx context.Context) {
+	ev.engine.mu.Lock()
+	defer ev.engine.mu.Unlock()
 
-	// 1. Generate synthetic scenario inputs if no active ingestion occurred
-	syntheticPages := e.GenerateSyntheticTxPages()
+	// 1. Exploration noise
+	ev.engine.sel.InjectExplorationNoise(ev.cfg.ExplorationScale)
+
+	// 2. Optional synthetic research
+	if ev.cfg.EnableSyntheticTx {
+		synth := ev.engine.GenerateSyntheticTx()
+		theta := ev.engine.stmb.RecentTheta
+		entropy := ev.engine.hde.Entropy()
+		ev.engine.stmb.Update(synth, theta, entropy)
+	}
+
+	// Refresh memory attractor
+	_ = ev.engine.ltms.Refresh(ctx)
+
+	stmbVec := ev.engine.stmb.Vector()
+	ltmsVec := ev.engine.ltms.Vector()
+	ev.engine.hde.Compute(stmbVec, ltmsVec)
+	hdeVec := ev.engine.hde.Vector()
 	
-	// Use last known signals as baseline
-	theta := e.stmb.RecentTheta
-	entropy := e.hde.Entropy()
+	ev.engine.prm.Compute(stmbVec, ltmsVec, hdeVec)
+	prmVec := ev.engine.prm.Vector()
 
-	// 2. STMB registers simulated inputs
-	e.stmb.Update(syntheticPages, theta, entropy)
-
-	// 3. Inject exploration noise into SEL strategy vector
-	e.InjectExplorationNoise(entropy)
-
-	// 4. Update memory attractor and compute deltas
-	_ = e.ltms.Refresh(ctx)
-	
-	stmbVec := e.stmb.Vector()
-	ltmsVec := e.ltms.Vector()
-	e.hde.Compute(stmbVec, ltmsVec)
-	hdeVec := e.hde.Vector()
-	
-	e.prm.Compute(stmbVec, ltmsVec, hdeVec)
-	prmVec := e.prm.Vector()
-
-	// 5. Compute adaptive reward and reinforce strategy vector
-	reward := e.sel.ComputeReward(stmbVec, ltmsVec, hdeVec, prmVec)
-	e.sel.UpdateStrategy(reward)
-
-	// 6. Build new contribution vector C_k and update lineage trajectory
-	Ck := e.vec.BuildCk(
+	// 3. Internal reward update
+	reward := ev.engine.sel.ComputeReward(
 		stmbVec,
 		ltmsVec,
 		hdeVec,
 		prmVec,
-		e.sel.Vector(),
 	)
-	CkNorm := e.vec.NormalizeCk(Ck)
-	e.lineage.Update(CkNorm)
+	ev.engine.sel.UpdateStrategy(reward)
 
-	// 7. Persist evolution state to the PQR Ticketing memory backend
+	// 4. Update lineage
+	Ck := ev.engine.vec.BuildCk(
+		stmbVec,
+		ltmsVec,
+		hdeVec,
+		prmVec,
+		ev.engine.sel.Vector(),
+	)
+	CkNorm := ev.engine.vec.NormalizeCk(Ck)
+	ev.engine.lineage.Update(CkNorm)
+
+	// 5. Persist lineage + entropy
 	go func() {
 		bgCtx := context.Background()
-		_ = e.sel.Persist(bgCtx)
-		
-		// Persist lineage snapshot
+		_ = ev.engine.sel.Persist(bgCtx)
 		data := map[string]interface{}{
-			"lineage": e.lineage.Vector(),
-			"entropy": e.hde.Entropy(),
+			"lineage": ev.engine.lineage.Vector(),
+			"entropy": ev.engine.hde.Entropy(),
+			"reward":  reward,
 			"mode":    "BACKGROUND_EVOLUTION",
 		}
-		ticketID, err := e.session.CreateMemory(bgCtx, "Autonomous Lineage Update", data)
+		ticketID, err := ev.engine.session.CreateMemory(bgCtx, "Background Evolution", data)
 		if err == nil {
-			_ = e.session.StoreMemory(bgCtx, ticketID, "state", data)
+			_ = ev.engine.session.StoreMemory(bgCtx, ticketID, "state", data)
 		}
 	}()
 }
 
-// InjectExplorationNoise injects exploration curiosity drift into the strategy vector.
-// Low Entropy -> high curiosity (needs to explore alternative pathways).
-// High Entropy -> low curiosity (needs to stabilize strategy).
-func (e *SENEngine) InjectExplorationNoise(entropy float64) {
-	strategy := e.sel.Strategy
-	n := len(strategy)
-	if n == 0 {
-		return
+// ------------------------------------------------------------
+// Synthetic Research
+// ------------------------------------------------------------
+
+func (e *SENEngine) GenerateSyntheticTx() []map[string]interface{} {
+	base := e.stmb.Vector()
+	perturbed := make([]float64, len(base))
+
+	for i := range base {
+		perturbed[i] = base[i] + (rand.Float64()-0.5)*0.1
 	}
 
-	// Curiosity is inversely proportional to entropy
-	curiosity := 1.0 - entropy
-	if curiosity < 0.05 {
-		curiosity = 0.05 // baseline search pressure
-	}
-
-	// Inject noise scaled by curiosity
-	noiseScale := 0.02 * curiosity
-	for i := range strategy {
-		strategy[i] += getRandomFloat() * noiseScale
+	return []map[string]interface{}{
+		{
+			"synthetic": true,
+			"vector":    perturbed,
+		},
 	}
 }
 
-// GenerateSyntheticTxPages simulates hypothetical transaction pages for scenario testing.
-func (e *SENEngine) GenerateSyntheticTxPages() []map[string]interface{} {
-	// Synthesize transactions with different entropy geometries
-	txs := make([]map[string]interface{}, 3)
-	for i := 0; i < 3; i++ {
-		txs[i] = map[string]interface{}{
-			"tx_id":          getRandomInt(),
-			"simulated_flow": 0.01 * float64(getRandomInt()%100),
-			"attractor_ref":  "synthetic-hyperplane-27",
+// ------------------------------------------------------------
+// CPU Load & Adaptive Tick
+// ------------------------------------------------------------
+
+func (ev *EvolutionEngine) cpuLoad() float64 {
+	// Simple heuristic: number of goroutines vs. CPU cores
+	g := float64(runtime.NumGoroutine())
+	c := float64(runtime.NumCPU())
+	load := g / (10 * c)
+	if load > 1 {
+		load = 1
+	}
+	return load
+}
+
+func (ev *EvolutionEngine) adaptTick(load float64) time.Duration {
+	scale := 1.0 - load
+	if scale < 0.1 {
+		scale = 0.1
+	}
+	return time.Duration(float64(ev.cfg.TickBase) * scale)
+}
+
+// ------------------------------------------------------------
+// Gossip system integration
+// ------------------------------------------------------------
+
+// Gossiper defines the contract for pushing gossip messages.
+type Gossiper interface {
+	Push(ctx context.Context)
+}
+
+// RegisterGossiper registers a gossip routing component with the engine.
+func (e *SENEngine) RegisterGossiper(g Gossiper) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	e.gossiper = g
+}
+
+// StartContinuousGossip runs a background loop to continuously broadcast gossip summaries to peers.
+func (e *SENEngine) StartContinuousGossip(ctx context.Context) {
+	go func() {
+		tick := e.cfg.GossipTick
+		if tick <= 0 {
+			tick = 1000 * time.Millisecond
 		}
-	}
-	return txs
-}
+		ticker := time.NewTicker(tick)
+		defer ticker.Stop()
 
-// Helpers
-func getRandomFloat() float64 {
-	nBig, err := rand.Int(rand.Reader, big.NewInt(1000))
-	if err != nil {
-		return 0.0
-	}
-	return (float64(nBig.Int64()) / 1000.0) - 0.5
-}
-
-func getRandomInt() int64 {
-	var b [8]byte
-	_, _ = rand.Read(b[:])
-	return int64(binary.BigEndian.Uint64(b[:]))
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				e.mu.RLock()
+				g := e.gossiper
+				e.mu.RUnlock()
+				if g != nil {
+					g.Push(ctx)
+				}
+			}
+		}
+	}()
 }
