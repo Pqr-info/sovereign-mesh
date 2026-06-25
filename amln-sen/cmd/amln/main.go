@@ -8,11 +8,11 @@ import (
 	"syscall"
 	"time"
 
-	"amln-sen/internal/api"
-	"amln-sen/internal/cognition"
-	"amln-sen/internal/pqr"
-	"amln-sen/internal/routing"
-	"amln-sen/internal/types"
+	"amln-sen/pkg/api"
+	"amln-sen/pkg/cognition"
+	"amln-sen/pkg/pqr"
+	"amln-sen/pkg/routing"
+	"amln-sen/pkg/types"
 )
 
 func main() {

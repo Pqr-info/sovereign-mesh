@@ -431,6 +431,25 @@ func (s *meshServer) HandshakeState(ctx context.Context, req *proto.StatePayload
 		CurrentModel: req.ActiveModel,
 	}
 
+	// Project the agent's genotype/protein onto the Substrate runtime
+	pdbID := [4]byte{'Z', 'E', 'T', 'A'}
+	var sigHash [32]byte
+	h := sha256.Sum256([]byte(req.AgentId))
+	copy(sigHash[:], h[:])
+	
+	dialectFamily := [16]byte{'o', 'r', 'c', 'h', 'e', 's', 't', 'r', 'o', 'n', 'i', 'c'}
+	
+	// Default target protein sequence used for offline verification
+	sequence := []byte("MEEPQSDPSVEPPLSQETFSDLWKLLPENNVLSPLP")
+
+	// Call the Substrate client asynchronously (non-blocking) to project the agent's identity
+	go func() {
+		err := s.controller.SubstrateClient.InstantiateAgent(context.Background(), pdbID, sigHash, dialectFamily, sequence)
+		if err != nil {
+			log.Printf("❌ SUBSTRATE INTEGRATION ERROR: Failed to instantiate agent %s: %v", req.AgentId, err)
+		}
+	}()
+
 	return &proto.SyncAck{
 		Success:       true,
 		Message:       "Welcome to the Sovereign Swarm.",

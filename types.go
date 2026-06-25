@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/pqr-info/sovereign-mesh/addressing"
+	"github.com/pqr-info/sovereign-mesh/substrate"
 	"google.golang.org/grpc"
 )
 
@@ -232,4 +233,10 @@ type Controller struct {
 	udpConn  interface{} // net.UDPConn
 	xdpFd    int
 	umemArea []byte
+
+	// SRRP Routing & Discovery Integration
+	routing   interface{} // Will store *routing.MeshRoutingEngine
+	discovery interface{} // Will store *discovery.DiscoveryService
+
+	SubstrateClient *substrate.Client
 }

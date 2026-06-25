@@ -15,6 +15,7 @@ require (
 )
 
 require (
+	amln-sen v0.0.0-00010101000000-000000000000 // indirect
 	cloud.google.com/go v0.115.0 // indirect
 	cloud.google.com/go/auth v0.6.1 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.2 // indirect
@@ -54,3 +55,5 @@ require (
 )
 
 replace github.com/pqr-info/sovereign-mesh/proto => ./proto/github.com/pqr-info/sovereign-mesh/proto
+
+replace amln-sen => ./amln-sen

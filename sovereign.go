@@ -15,7 +15,10 @@ import (
 	"time"
 
 	"github.com/pqr-info/sovereign-mesh/addressing"
+	"github.com/pqr-info/sovereign-mesh/routing"
+	"github.com/pqr-info/sovereign-mesh/discovery"
 	"github.com/pqr-info/sovereign-mesh/proto"
+	"github.com/pqr-info/sovereign-mesh/substrate"
 	"golang.org/x/telemetry/counter"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -46,9 +49,42 @@ func NewController(projectID, location string) *Controller {
 	}
 
 	c.Address5D = addressing.NewAddress5D()
+	c.SubstrateClient = substrate.NewClient("http://localhost:9944")
+
+	rEngine := routing.NewMeshRoutingEngine(projectID)
+	c.routing = rEngine
+
+	discService, _ := discovery.NewDiscoveryService(discovery.DiscoveryConfig{
+		OnNeighborDiscovered: c.onNeighborDiscovered,
+		OnNeighborLost:       c.onNeighborLost,
+	})
+	c.discovery = discService
 
 	c.SeedGenesisBlock()
 	return c
+}
+
+func (c *Controller) onNeighborDiscovered(n discovery.NeighborInfo) {
+	rEngine := c.routing.(*routing.MeshRoutingEngine)
+	if rEngine.LocalNeighborCount() >= 3 {
+		log.Printf("[LM-3] Neighbor limit reached, ignoring: %s (%s)", n.ID, n.Addr)
+		return
+	}
+
+	log.Printf("[SRRP] Neighbor discovered: %s (%s)", n.ID, n.Addr)
+	rEngine.AddOrUpdateNeighbor(routing.SRRPNeighbor{
+		ID:        n.ID,
+		Addr:      n.Addr,
+		Transport: n.Transport,
+		Metric:    n.Metric,
+		LastSeen:  time.Now(),
+	})
+}
+
+func (c *Controller) onNeighborLost(id string) {
+	log.Printf("[SRRP] Neighbor lost: %s", id)
+	rEngine := c.routing.(*routing.MeshRoutingEngine)
+	rEngine.RemoveNeighbor(id)
 }
 
 // OuroborosSentinel monitors core processes and triggers the Resurrection protocol on failure.
@@ -224,6 +260,12 @@ func (c *Controller) Start(ctx context.Context) {
 		"web_portal":  "python3 -u grpc_node/web_server.py",
 	}
 	go c.OuroborosSentinel(ctx)
+
+	// Start Routing & Discovery Engines
+	rEngine := c.routing.(*routing.MeshRoutingEngine)
+	rEngine.Start(ctx)
+	discService := c.discovery.(*discovery.DiscoveryService)
+	discService.Start(ctx)
 
 	starbirthCounter := counter.New("sovereign/starbirth_initialization_total")
 	starbirthCounter.Inc()

@@ -7,6 +7,11 @@ import time
 import binascii
 import threading
 from datetime import datetime
+import queue
+import json
+import uuid
+import smf_wrapper
+
 
 # --- AESTHETIC CONSTANTS ---
 BLUE = "\033[94m"
@@ -31,6 +36,151 @@ TOTAL_BUS_SIZE = 16 * 1024 * 1024  # 16MB
 HEADER_FORMAT = "!IIIII"  # Magic, PageIndex, Offset, PageSize, Checksum
 HEADER_SIZE = struct.calcsize(HEADER_FORMAT)
 MAGIC = 0xDEADBEEF
+
+# Bounded queue with 10k items maximum to prevent memory spikes
+ticketing_queue = queue.Queue(maxsize=10000)
+
+def passive_ticketing_worker():
+    ticket_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'passive_tickets.jsonl')
+    log(f"Passive Ticketing system active. Output: {BOLD}{ticket_file_path}{RESET}", color=GOLD)
+    
+    session_buffers = {}
+    
+    while True:
+        try:
+            event = ticketing_queue.get()
+            if event is None:
+                break
+            
+            client_ip, client_port, page_index, offset, page_size, payload = event
+            
+            # 1. Detect Dialect
+            dialect = "unknown"
+            decoded_text = ""
+            stripped = ""
+            try:
+                decoded_text = payload.decode('utf-8')
+                dialect = "text"
+                stripped = decoded_text.strip()
+                if (stripped.startswith('{') and stripped.endswith('}')) or (stripped.startswith('[') and stripped.endswith(']')):
+                    try:
+                        json.loads(stripped)
+                        dialect = "json"
+                    except Exception:
+                        pass
+            except UnicodeDecodeError:
+                if len(payload) > 4 and payload[0:4] == b"MThd":
+                    dialect = "midi/smf"
+                elif b"MTrk" in payload:
+                    dialect = "midi/smf"
+                else:
+                    dialect = "binary"
+            
+            # 2. Infer Intent from content/context
+            intent = "Observe/Page"
+            if dialect in ("text", "json"):
+                text_lower = decoded_text.lower()
+                if any(x in text_lower for x in ("error", "fail", "flatline", "alert", "panic")):
+                    intent = "Alert/Sentry/Recovery"
+                elif any(x in text_lower for x in ("buy", "sell", "arbitrage", "price")):
+                    intent = "Arbitrage/Signal"
+                elif any(x in text_lower for x in ("agent", "persona", "state", "weights")):
+                    intent = "AgentStateSync"
+                elif any(x in text_lower for x in ("ticket", "resolution", "pedigree")):
+                    intent = "TicketSync"
+            elif dialect == "midi/smf":
+                intent = "SymbolicMidiStream"
+            elif offset == 0:
+                intent = "GenesisPage"
+            
+            # 3. Create Ticket Document
+            ticket = {
+                "ticket_id": str(uuid.uuid4()),
+                "timestamp": datetime.utcnow().isoformat() + "Z",
+                "client_address": f"{client_ip}:{client_port}",
+                "page_index": page_index,
+                "offset": offset,
+                "page_size": page_size,
+                "dialect": dialect,
+                "intent": intent,
+                "payload_len": len(payload),
+                "payload_preview": decoded_text[:200] if dialect in ("text", "json") else payload.hex()[:100]
+            }
+            
+            # 4. Write to JSONL
+            with open(ticket_file_path, "a", encoding="utf-8") as f:
+                f.write(json.dumps(ticket) + "\n")
+                
+            # 5. Dynamic SMF Compilation (Format 1 multi-track wrapper)
+            session_id = "default_mesh_session"
+            agent_id = f"agent_{client_ip.replace('.', '_')}_{client_port}"
+            
+            if dialect == "json":
+                try:
+                    data_dict = json.loads(stripped)
+                    if "session_id" in data_dict:
+                        session_id = str(data_dict["session_id"])
+                    elif "team_id" in data_dict:
+                        session_id = str(data_dict["team_id"])
+                    
+                    if "agent_id" in data_dict:
+                        agent_id = str(data_dict["agent_id"])
+                except Exception:
+                    pass
+                    
+            now = time.time()
+            if session_id not in session_buffers:
+                session_buffers[session_id] = {
+                    "last_times": {},
+                    "tracks": {
+                        "meta": [
+                            {"delta_time": 0, "status": 0xFF, "meta_type": 0x03, "payload": f"Session {session_id}".encode('utf-8')},
+                            {"delta_time": 0, "status": 0xFF, "meta_type": 0x01, "payload": b"Session Start"}
+                        ]
+                    }
+                }
+                
+            session = session_buffers[session_id]
+            if agent_id not in session["tracks"]:
+                session["tracks"][agent_id] = [
+                    {"delta_time": 0, "status": 0xFF, "meta_type": 0x03, "payload": f"Agent {agent_id}".encode('utf-8')}
+                ]
+                session["last_times"][agent_id] = now
+                delta_ticks = 0
+            else:
+                last_time = session["last_times"][agent_id]
+                delta_ticks = int((now - last_time) * 960)
+                session["last_times"][agent_id] = now
+                
+            packed_payload = smf_wrapper.pack_bytes_to_7bit(payload)
+            session["tracks"][agent_id].append({
+                "delta_time": delta_ticks,
+                "status": 0xF0,
+                "payload": packed_payload
+            })
+            
+            # Compile and flush to disk periodically
+            total_events = sum(len(tr) for tr in session["tracks"].values())
+            if total_events % 5 == 0:  # Every 5 events
+                mid_dir = os.path.dirname(ticket_file_path)
+                mid_file_path = os.path.join(mid_dir, f"{session_id}_memory.mid")
+                
+                mtrk_tracks = []
+                # Meta track first
+                mtrk_tracks.append(smf_wrapper.build_mtrk(session["tracks"]["meta"]))
+                for a_id, events in session["tracks"].items():
+                    if a_id == "meta":
+                        continue
+                    mtrk_tracks.append(smf_wrapper.build_mtrk(events))
+                    
+                smf_blob = smf_wrapper.compile_smf(mtrk_tracks)
+                with open(mid_file_path, "wb") as f_mid:
+                    f_mid.write(smf_blob)
+                    
+        except Exception as e:
+            log(f"Exception in passive ticketing worker: {e}", color=RED)
+        finally:
+            ticketing_queue.task_done()
 
 
 def initialize_shared_memory():
@@ -137,6 +287,19 @@ def handle_client_connection(client_socket, client_address, mapped_memory):
             t_write_1 = time.time_ns()
             write_time_us = (t_write_1 - t_write_0) / 1000.0
 
+            # Passive Ticket Generation (Asynchronous & Bounded)
+            try:
+                ticketing_queue.put_nowait((
+                    client_address[0],
+                    client_address[1],
+                    page_index,
+                    offset,
+                    page_size,
+                    bytes(payload_bytes)
+                ))
+            except queue.Full:
+                log("Ticketing Queue full! Dropping passive page log to preserve bus timing.", color=RED)
+
             total_bytes_received += page_size
             pages_copied += 1
 
@@ -184,6 +347,13 @@ def run_server():
     """)
 
     mapped_memory, file_handle = initialize_shared_memory()
+
+    # Start background ticketing worker thread
+    ticketing_worker_thread = threading.Thread(
+        target=passive_ticketing_worker,
+        daemon=True
+    )
+    ticketing_worker_thread.start()
 
     import subprocess
 
