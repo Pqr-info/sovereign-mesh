@@ -6159,7 +6159,7 @@ const file_sync_proto_rawDesc = "" +
 	"\tArtistDAO\x12.\n" +
 	"\aMintArt\x12\x12.proto.MintRequest\x1a\x0f.proto.ArtAsset\x128\n" +
 	"\aListArt\x12\x12.proto.ListRequest\x1a\x19.proto.MarketplaceListing\x126\n" +
-	"\x06BuyArt\x12\x11.proto.BuyRequest\x1a\x19.proto.TransactionReceiptB*Z(github.com/pqr-info/sovereign-mesh/protob\x06proto3"
+	"\x06BuyArt\x12\x11.proto.BuyRequest\x1a\x19.proto.TransactionReceiptB*Z(github.com/pqr-info/substrate/protob\x06proto3"
 
 var (
 	file_sync_proto_rawDescOnce sync.Once

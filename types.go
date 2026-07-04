@@ -1,11 +1,11 @@
-package sovereign
+package substrate
 
 import (
 	"sync"
 	"time"
 
-	"github.com/pqr-info/sovereign-mesh/addressing"
-	"github.com/pqr-info/sovereign-mesh/substrate"
+	"github.com/pqr-info/substrate/addressing"
+	"github.com/pqr-info/substrate/substrate"
 	"google.golang.org/grpc"
 )
 

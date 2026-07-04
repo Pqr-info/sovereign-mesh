@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"github.com/pqr-info/sovereign-mesh"
+	"github.com/pqr-info/substrate"
 )
 
 func main() {

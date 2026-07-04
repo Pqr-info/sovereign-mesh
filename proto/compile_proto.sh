@@ -12,8 +12,8 @@ protoc -I. \
 popd > /dev/null
 
 # Move to the nested directory used by the main go.mod replace directive
-# The main repo expects them in proto/github.com/pqr-info/sovereign-mesh/proto
-TARGET_DIR="proto/github.com/pqr-info/sovereign-mesh/proto"
+# The main repo expects them in proto/github.com/pqr-info/substrate/proto
+TARGET_DIR="proto/github.com/pqr-info/substrate/proto"
 mkdir -p $TARGET_DIR
 mv -f proto/sync.pb.go proto/sync_grpc.pb.go $TARGET_DIR/
 mv -f proto/mesh_proto.pb.go proto/mesh_proto_grpc.pb.go $TARGET_DIR/

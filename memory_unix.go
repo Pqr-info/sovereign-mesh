@@ -1,6 +1,6 @@
 //go:build !windows
 
-package sovereign
+package substrate
 
 import (
 	"os"

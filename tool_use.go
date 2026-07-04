@@ -1,4 +1,4 @@
-package sovereign
+package substrate
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/launcher"
-	"github.com/pqr-info/sovereign-mesh/proto"
+	"github.com/pqr-info/substrate/proto"
 )
 
 type ToolUseServer struct {

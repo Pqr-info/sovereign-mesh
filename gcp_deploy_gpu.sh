@@ -10,7 +10,7 @@ PROJECT_ID="model-loader-495607-m2"
 REGION="us-central1"
 ZONE="us-central1-c"
 REPOSITORY="sovereign-neural-repo"
-IMAGE_NAME="sovereign-27-300m"
+IMAGE_NAME="SUBSTRATE-300m"
 TAG="latest"
 INSTANCE_NAME="sovereign-training-gpu"
 GPU_TYPE="nvidia-tesla-t4" # T4/L4 for general, A100 for heavy training
@@ -23,7 +23,7 @@ RESET="\033[0m"
 BOLD="\033[1m"
 
 echo -e "${GOLD}============================================================${RESET}"
-echo -e "${BOLD}  SOVEREIGN-27: CONTAINERIZED GPU DEPLOYMENT DISPATCHER${RESET}"
+echo -e "${BOLD}  SUBSTRATE: CONTAINERIZED GPU DEPLOYMENT DISPATCHER${RESET}"
 echo -e "${GOLD}============================================================${RESET}"
 echo -e "${CYAN}GCP Project:${RESET} ${PROJECT_ID}"
 echo -e "${CYAN}Target Region:${RESET} ${REGION} (${ZONE})"
@@ -73,7 +73,7 @@ gcloud compute instances create-with-container "${INSTANCE_NAME}" \
     --metadata="install-nvidia-driver=True" \
     --boot-disk-size="50GB" \
     --boot-disk-type="pd-ssd" \
-    --tags=sovereign-mesh-node \
+    --tags=substrate-node \
     --maintenance-policy="TERMINATE"
 
 echo -e "${GREEN}[OK] GPU Compute Instance online running training container!${RESET}"
@@ -81,7 +81,7 @@ echo -e "${GREEN}[OK] GPU Compute Instance online running training container!${R
 # --- STEP 7: Stream Telemetry Verification ---
 echo ""
 echo -e "${GREEN}${BOLD}============================================================${RESET}"
-echo -e "${GREEN}${BOLD}  🚀 DEPLOYMENT DISPATCH COMPLETE: SOVEREIGN-27 ONLINE${RESET}"
+echo -e "${GREEN}${BOLD}  🚀 DEPLOYMENT DISPATCH COMPLETE: SUBSTRATE ONLINE${RESET}"
 echo -e "${GREEN}${BOLD}============================================================${RESET}"
 echo -e "${CYAN}VM Instance:${RESET}      ${INSTANCE_NAME}"
 echo -e "${CYAN}Image URI:${RESET}        ${FULL_IMAGE_URI}"

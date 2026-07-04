@@ -481,7 +481,7 @@ const file_mesh_proto_proto_rawDesc = "" +
 	"\vRequestTask\x12\x10.proto.TaskLease\x1a\x15.proto.TaskAssignment\x129\n" +
 	"\n" +
 	"GetBalance\x12\x14.proto.WalletRequest\x1a\x15.proto.WalletResponse\x121\n" +
-	"\tStakeCoin\x12\x13.proto.StakeRequest\x1a\x0f.proto.ResponseB*Z(github.com/pqr-info/sovereign-mesh/protob\x06proto3"
+	"\tStakeCoin\x12\x13.proto.StakeRequest\x1a\x0f.proto.ResponseB*Z(github.com/pqr-info/substrate/protob\x06proto3"
 
 var (
 	file_mesh_proto_proto_rawDescOnce sync.Once

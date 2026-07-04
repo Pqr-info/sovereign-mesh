@@ -1,6 +1,6 @@
 #!/bin/bash
 # ==============================================================================
-# SOVEREIGN-27: EPHEMERAL GOOGLE CLOUD RUN GPU DEPLOYMENT SCRIPT
+# SUBSTRATE: EPHEMERAL GOOGLE CLOUD RUN GPU DEPLOYMENT SCRIPT
 # Deploys as a serverless container that scales to zero (dies) when idle.
 # ==============================================================================
 set -e
@@ -9,9 +9,9 @@ set -e
 PROJECT_ID="model-loader-495607-m2"
 REGION="us-central1"
 REPOSITORY="sovereign-neural-repo"
-IMAGE_NAME="sovereign-27-300m"
+IMAGE_NAME="SUBSTRATE-300m"
 TAG="latest"
-SERVICE_NAME="sovereign-27-pool"
+SERVICE_NAME="SUBSTRATE-pool"
 
 CYAN="\033[96m"
 GREEN="\033[92m"
@@ -20,7 +20,7 @@ RESET="\033[0m"
 BOLD="\033[1m"
 
 echo -e "${GOLD}============================================================${RESET}"
-echo -e "${BOLD}  SOVEREIGN-27: SERVERLESS CLOUD RUN GPU DISPATCHER${RESET}"
+echo -e "${BOLD}  SUBSTRATE: SERVERLESS CLOUD RUN GPU DISPATCHER${RESET}"
 echo -e "${GOLD}============================================================${RESET}"
 echo -e "${CYAN}GCP Project:${RESET}   ${PROJECT_ID}"
 echo -e "${CYAN}Target Region:${RESET} ${REGION}"
@@ -37,7 +37,7 @@ echo -e "${GREEN}[OK] APIs ready.${RESET}"
 
 # --- STEP 2: Tag and Push Container to Registry ---
 echo -e "${GOLD}[STEP 2] Pushing latest Sovereign-27 container image to registry...${RESET}"
-docker tag "sovereign-27-300m:latest" "${FULL_IMAGE_URI}"
+docker tag "SUBSTRATE-300m:latest" "${FULL_IMAGE_URI}"
 docker push "${FULL_IMAGE_URI}"
 echo -e "${GREEN}[OK] Container pushed successfully.${RESET}"
 

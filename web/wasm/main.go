@@ -10,7 +10,7 @@ import (
     "encoding/json"
     "syscall/js"
 
-    "github.com/pqr-info/sovereign-mesh/timemachine"
+    "github.com/pqr-info/substrate/timemachine"
 )
 
 var (
@@ -372,7 +372,7 @@ func getControlDecisionJSON(this js.Value, args []js.Value) interface{} {
 		return nil
 	}
 	payload := fmt.Sprintf(
-		`{"type":"control","source":"sovereign-mesh","version":1,"ts_ms":%d,"intent":"adjust_regime","payload":{"regime":"%s","mutation_scale":%.3f,"coupling_gain":%.3f,"input_band":"%s"}}`,
+		`{"type":"control","source":"substrate","version":1,"ts_ms":%d,"intent":"adjust_regime","payload":{"regime":"%s","mutation_scale":%.3f,"coupling_gain":%.3f,"input_band":"%s"}}`,
 		nowMs,
 		decision.Regime,
 		decision.MutationScale,

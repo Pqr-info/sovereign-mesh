@@ -1,5 +1,5 @@
 # ==============================================================================
-# SOVEREIGN-27-300M NEURAL CORE ENGINE
+# SUBSTRATE-300M NEURAL CORE ENGINE
 # Specialized 300M parameter model optimized for mobile NPU and mesh supercomputers
 # ==============================================================================
 
@@ -10,7 +10,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-print("🌀 SOVEREIGN-27: Initializing Neural Core Engine...")
+print("🌀 SUBSTRATE: Initializing Neural Core Engine...")
 
 # ==============================================================================
 # 1. ARCHITECTURE HYPERPARAMETERS (FACTOR-27 SYNTACTIC ALLIGNMENT)
@@ -154,8 +154,8 @@ def run_training():
     # ==============================================================================
     print("\n📦 SAVING GENOMICS: Compilation of Sovereign-27-300M complete.")
     os.makedirs("/workspace/checkpoints", exist_ok=True)
-    torch.save(model.state_dict(), "/workspace/checkpoints/sovereign-27-300m-raw.pt")
-    print("💾 Checkpoint saved at /workspace/checkpoints/sovereign-27-300m-raw.pt")
+    torch.save(model.state_dict(), "/workspace/checkpoints/SUBSTRATE-300m-raw.pt")
+    print("💾 Checkpoint saved at /workspace/checkpoints/SUBSTRATE-300m-raw.pt")
     
     # Export layout metrics for Mobile NPU Quantization (ONNX / CoreML / TFLite targets)
     print("\n📱 MOBILE NPU EXECUTION STRATEGY:")

@@ -1,0 +1,3 @@
+brain_endpoint: http://localhost:4111
+ticketing_endpoint: http://localhost:8080
+db_url: postgresql://root@localhost:26257/antigravity?sslmode=disable

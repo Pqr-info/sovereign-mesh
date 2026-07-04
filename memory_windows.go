@@ -1,6 +1,6 @@
 //go:build windows
 
-package sovereign
+package substrate
 
 const (
 	BusSize    = 64 * 1024 * 1024

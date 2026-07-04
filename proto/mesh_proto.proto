@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package proto;
-option go_package = "github.com/pqr-info/sovereign-mesh/proto";
+option go_package = "github.com/pqr-info/substrate/proto";
 
 service SovereignMesh {
   // Agents register their presence and status

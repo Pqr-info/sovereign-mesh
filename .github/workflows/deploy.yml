@@ -52,23 +52,23 @@ jobs:
       - name: Package mesh components
         run: |
           echo "📦 Packaging sovereign mesh components..."
-          tar -czf sovereign-mesh-${{ steps.ctx.outputs.VERSION }}.tar.gz \
+          tar -czf substrate-${{ steps.ctx.outputs.VERSION }}.tar.gz \
             --exclude='**/__pycache__' --exclude='**/*.pyc' \
             memory_bus/ grpc_node/ proto/ tunnels/ mesh_control.sh
-          ls -lh sovereign-mesh-*.tar.gz
+          ls -lh substrate-*.tar.gz
 
       - name: Upload deployment artifact
         uses: actions/upload-artifact@v4
         with:
-          name: sovereign-mesh-${{ steps.ctx.outputs.VERSION }}
-          path: sovereign-mesh-*.tar.gz
+          name: substrate-${{ steps.ctx.outputs.VERSION }}
+          path: substrate-*.tar.gz
           retention-days: 30
 
       - name: Create GitHub Release (tags only)
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: sovereign-mesh-*.tar.gz
+          files: substrate-*.tar.gz
           generate_release_notes: true
           body: |
             ## 🌀 Sovereign Mesh ${{ steps.ctx.outputs.VERSION }}

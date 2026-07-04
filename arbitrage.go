@@ -1,5 +1,5 @@
 // arbitrage.go
-package sovereign
+package substrate
 
 import (
 	"bytes"
@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/pqr-info/sovereign-mesh/addressing"
+	"github.com/pqr-info/substrate/addressing"
 )
 
 type ArbitrageDaemon struct {

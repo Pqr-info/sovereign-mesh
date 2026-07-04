@@ -615,7 +615,7 @@ func (a *Router) handleGetDeployment(c *gin.Context) {
 	dep := governance.SovereignNodeDeployment{
 		Class:   governance.ClassGlobalCoreNode,
 		Profile: profile,
-		MeshID:  "sovereign-mesh-global",
+		MeshID:  "substrate-global",
 	}
 	c.JSON(http.StatusOK, dep)
 }

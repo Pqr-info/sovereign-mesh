@@ -7,7 +7,7 @@ Decentralized sovereign mesh network with a 128-agent swarm operating on the PQR
 ## Team
 
 - **Developer**: aellok (solo)
-- **GitHub**: thealanphipps-del/sovereign-mesh
+- **GitHub**: thealanphipps-del/substrate
 - **Development Environment**: Linux (WSL2 + native)
 
 ## Current Milestone
@@ -22,7 +22,7 @@ Target: Ship a stable, deployable sovereign mesh with working Android client, po
 | Component | Technology | Notes |
 |-----------|-----------|-------|
 | Language | Go 1.26+ | Strict `CGO_ENABLED=0` static linking |
-| Module | `github.com/pqr-info/sovereign-mesh` | |
+| Module | `github.com/pqr-info/substrate` | |
 | Web Embed | Vanilla HTML5/CSS3/JS via `go:embed` | GIN-embedded static assets |
 | Frontend | React 19 + TypeScript 6 + Vite 8 | Separate SPA in `frontend/` |
 | Android | Kotlin/Java + Gradle | In `/home/aellok/triplehelix/android_app` |

@@ -1,4 +1,4 @@
-package sovereign
+package substrate
 
 import (
 	"context"
@@ -253,7 +253,7 @@ func (c *Controller) ReconstructState() {
 func (c *Controller) SeedGenesisBlock() {
 	genesisPayload := map[string]interface{}{
 		"system_status": "ONLINE",
-		"progenitor":    "SOVEREIGN-MESH-V1",
+		"progenitor":    "SUBSTRATE-V1",
 	}
 	c.CommitMutation("AGENT-0", genesisPayload)
 }

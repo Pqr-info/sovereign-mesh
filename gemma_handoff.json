@@ -44,7 +44,7 @@
     ]
   },
   "docker_container": {
-    "tag": "sovereign-27-300m:latest",
+    "tag": "SUBSTRATE-300m:latest",
     "base_image": "pytorch/pytorch:2.2.1-cuda12.1-cudnn8-runtime",
     "status": "COMPILED_AND_READY"
   },

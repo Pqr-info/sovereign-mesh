@@ -1,4 +1,4 @@
-package sovereign
+package substrate
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/pqr-info/sovereign-mesh/proto"
+	"github.com/pqr-info/substrate/proto"
 	"google.golang.org/grpc"
 	"layeh.com/radius"
 	"layeh.com/radius/rfc2865"

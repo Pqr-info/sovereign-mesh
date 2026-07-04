@@ -1,4 +1,4 @@
-package sovereign
+package substrate
 
 import (
 	"context"
@@ -14,11 +14,11 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/pqr-info/sovereign-mesh/addressing"
-	"github.com/pqr-info/sovereign-mesh/routing"
-	"github.com/pqr-info/sovereign-mesh/discovery"
-	"github.com/pqr-info/sovereign-mesh/proto"
-	"github.com/pqr-info/sovereign-mesh/substrate"
+	"github.com/pqr-info/substrate/addressing"
+	"github.com/pqr-info/substrate/routing"
+	"github.com/pqr-info/substrate/discovery"
+	"github.com/pqr-info/substrate/proto"
+	"github.com/pqr-info/substrate/substrate"
 	"golang.org/x/telemetry/counter"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"

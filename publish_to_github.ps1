@@ -10,7 +10,7 @@
 
 $RepoPath = "\\wsl.localhost\Ubuntu\home\aellok\sovereign_mesh"
 $TargetOrg = "Pqr-info"
-$TargetRepo = "sovereign-mesh"
+$TargetRepo = "substrate"
 $RemoteUrlHttps = "https://github.com/$TargetOrg/$TargetRepo.git"
 $RemoteUrlSsh = "git@github.com:$TargetOrg/$TargetRepo.git"
 

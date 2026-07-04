@@ -5,7 +5,7 @@ import warnings
 
 import sync_pb2 as sync__pb2
 
-GRPC_GENERATED_VERSION = '1.80.0'
+GRPC_GENERATED_VERSION = '1.81.1'
 GRPC_VERSION = grpc.__version__
 _version_not_supported = False
 
@@ -25,7 +25,7 @@ if _version_not_supported:
     )
 
 
-class AgentSyncStub(object):
+class AgentSyncStub:
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -196,7 +196,7 @@ class AgentSyncStub(object):
                 _registered_method=True)
 
 
-class AgentSyncServicer(object):
+class AgentSyncServicer:
     """Missing associated documentation comment in .proto file."""
 
     def Ping(self, request, context):
@@ -574,7 +574,7 @@ def add_AgentSyncServicer_to_server(servicer, server):
 
 
  # This class is part of an EXPERIMENTAL API.
-class AgentSync(object):
+class AgentSync:
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
@@ -1442,7 +1442,7 @@ class AgentSync(object):
             _registered_method=True)
 
 
-class AgentToolUseStub(object):
+class AgentToolUseStub:
     """AgentToolUse Service for Native Tooling
     """
 
@@ -1479,7 +1479,7 @@ class AgentToolUseStub(object):
                 _registered_method=True)
 
 
-class AgentToolUseServicer(object):
+class AgentToolUseServicer:
     """AgentToolUse Service for Native Tooling
     """
 
@@ -1549,7 +1549,7 @@ def add_AgentToolUseServicer_to_server(servicer, server):
 
 
  # This class is part of an EXPERIMENTAL API.
-class AgentToolUse(object):
+class AgentToolUse:
     """AgentToolUse Service for Native Tooling
     """
 
@@ -1689,7 +1689,7 @@ class AgentToolUse(object):
             _registered_method=True)
 
 
-class NeuralTrainingStub(object):
+class NeuralTrainingStub:
     """NeuralTransition & Self-Training Service
     """
 
@@ -1711,7 +1711,7 @@ class NeuralTrainingStub(object):
                 _registered_method=True)
 
 
-class NeuralTrainingServicer(object):
+class NeuralTrainingServicer:
     """NeuralTransition & Self-Training Service
     """
 
@@ -1748,7 +1748,7 @@ def add_NeuralTrainingServicer_to_server(servicer, server):
 
 
  # This class is part of an EXPERIMENTAL API.
-class NeuralTraining(object):
+class NeuralTraining:
     """NeuralTransition & Self-Training Service
     """
 
@@ -1807,7 +1807,7 @@ class NeuralTraining(object):
             _registered_method=True)
 
 
-class SovereignCityStub(object):
+class SovereignCityStub:
     """Sovereign City Protocol Service
     """
 
@@ -1834,7 +1834,7 @@ class SovereignCityStub(object):
                 _registered_method=True)
 
 
-class SovereignCityServicer(object):
+class SovereignCityServicer:
     """Sovereign City Protocol Service
     """
 
@@ -1882,7 +1882,7 @@ def add_SovereignCityServicer_to_server(servicer, server):
 
 
  # This class is part of an EXPERIMENTAL API.
-class SovereignCity(object):
+class SovereignCity:
     """Sovereign City Protocol Service
     """
 
@@ -1968,7 +1968,7 @@ class SovereignCity(object):
             _registered_method=True)
 
 
-class ArtistDAOStub(object):
+class ArtistDAOStub:
     """Artist DAO Marketplace
     """
 
@@ -1995,7 +1995,7 @@ class ArtistDAOStub(object):
                 _registered_method=True)
 
 
-class ArtistDAOServicer(object):
+class ArtistDAOServicer:
     """Artist DAO Marketplace
     """
 
@@ -2043,7 +2043,7 @@ def add_ArtistDAOServicer_to_server(servicer, server):
 
 
  # This class is part of an EXPERIMENTAL API.
-class ArtistDAO(object):
+class ArtistDAO:
     """Artist DAO Marketplace
     """
 

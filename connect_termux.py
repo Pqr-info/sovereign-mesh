@@ -1,5 +1,5 @@
 # ==============================================================================
-# SOVEREIGN-27: DISTRIBUTED NPU CLIENT FOR TERMUX (ANDROID)
+# SUBSTRATE: DISTRIBUTED NPU CLIENT FOR TERMUX (ANDROID)
 # Run this script directly on your phone inside Termux to join the inference pool.
 # Requires: python3
 # ==============================================================================

@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/pqr-info/sovereign-mesh/proto"
+	"github.com/pqr-info/substrate/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

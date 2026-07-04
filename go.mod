@@ -1,4 +1,4 @@
-module github.com/pqr-info/sovereign-mesh
+module github.com/pqr-info/substrate
 
 go 1.26 // Minimum required version for eBPF and generated protobuf compatibility
 
@@ -6,7 +6,7 @@ require (
 	cloud.google.com/go/aiplatform v1.68.0
 	cloud.google.com/go/storage v1.43.0
 	github.com/go-rod/rod v0.116.2
-	github.com/pqr-info/sovereign-mesh/proto v0.0.0-00010101000000-000000000000
+	github.com/pqr-info/substrate/proto v0.0.0-00010101000000-000000000000
 	golang.org/x/telemetry v0.0.0-20260508192327-42602be52be6
 	google.golang.org/api v0.187.0
 	google.golang.org/grpc v1.64.0
@@ -54,6 +54,6 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240624140628-dc46fd24d27d // indirect
 )
 
-replace github.com/pqr-info/sovereign-mesh/proto => ./proto/github.com/pqr-info/sovereign-mesh/proto
+replace github.com/pqr-info/substrate/proto => ./proto/github.com/pqr-info/substrate/proto
 
 replace amln-sen => ./amln-sen

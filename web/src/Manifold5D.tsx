@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 type Coords5D = { x1: number; x2: number; x3: number; x4: number; x5: number };
 
@@ -11,6 +11,9 @@ type Props = {
 export const Manifold5D: React.FC<Props> = ({ coords, history, size = 300 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const thetaRef = useRef(0);
+  const [hoveredNode, setHoveredNode] = useState<Coords5D | null>(null);
+  const [hoverPos, setHoverPos] = useState<{x: number, y: number} | null>(null);
+  const mouseRef = useRef<{x: number, y: number} | null>(null);
   
   // Animation state
   const prevRef = useRef<Coords5D>(coords);
@@ -134,6 +137,43 @@ export const Manifold5D: React.FC<Props> = ({ coords, history, size = 300 }) => 
       
       ctx.shadowBlur = 0;
 
+      // ----------------------------------------------------
+      // Node Collision Detection
+      // ----------------------------------------------------
+      const m = mouseRef.current;
+      let closestNode: Coords5D | null = null;
+      let minDistance = 15; // 15px hover radius
+
+      if (m) {
+        // Check historical nodes
+        for (const h of history) {
+            const hp3 = project5Dto3D(h);
+            const hp2 = rotate3D(hp3, theta);
+            const screenX = center + hp2.x / 4;
+            const screenY = center - hp2.y / 4;
+            const dist = Math.hypot(m.x - screenX, m.y - screenY);
+            if (dist < minDistance) {
+                minDistance = dist;
+                closestNode = h;
+            }
+        }
+
+        // Check current node
+        const currScreenX = center + p2.x / 4;
+        const currScreenY = center - p2.y / 4;
+        const currDist = Math.hypot(m.x - currScreenX, m.y - currScreenY);
+        if (currDist < minDistance) {
+            closestNode = animRef.current;
+        }
+      }
+      
+      setHoveredNode(closestNode);
+      if (closestNode && m) {
+        setHoverPos(m);
+      } else {
+        setHoverPos(null);
+      }
+
       animationId = requestAnimationFrame(animate);
     };
 
@@ -144,5 +184,49 @@ export const Manifold5D: React.FC<Props> = ({ coords, history, size = 300 }) => 
     };
   }, [coords, history, size]);
 
-  return <canvas ref={canvasRef} width={size} height={size} style={{ display: "block", margin: "auto" }} />;
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      mouseRef.current = {
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top,
+      };
+  };
+
+  const handleMouseLeave = () => {
+      mouseRef.current = null;
+  };
+
+  return (
+    <div 
+        style={{ position: "relative", width: size, height: size, margin: "auto" }}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+    >
+        <canvas ref={canvasRef} width={size} height={size} style={{ display: "block" }} />
+        {hoveredNode && hoverPos && (
+            <div style={{
+                position: "absolute",
+                left: hoverPos.x + 15,
+                top: hoverPos.y + 15,
+                backgroundColor: "rgba(20, 20, 20, 0.9)",
+                border: "1px solid #4ecdc4",
+                padding: "8px 12px",
+                borderRadius: 6,
+                color: "#fff",
+                fontFamily: "monospace",
+                fontSize: "12px",
+                pointerEvents: "none",
+                zIndex: 10,
+                boxShadow: "0 0 10px rgba(78, 205, 196, 0.3)"
+            }}>
+                <div style={{ color: "#4ecdc4", marginBottom: 4, fontWeight: "bold" }}>Node Coordinate</div>
+                <div>x₁: {hoveredNode.x1.toFixed(1)}</div>
+                <div>x₂: {hoveredNode.x2.toFixed(1)}</div>
+                <div>x₃: {hoveredNode.x3.toFixed(1)}</div>
+                <div>x₄: {hoveredNode.x4.toFixed(1)}</div>
+                <div>x₅: {hoveredNode.x5.toFixed(1)}</div>
+            </div>
+        )}
+    </div>
+  );
 };

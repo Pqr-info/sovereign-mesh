@@ -2,7 +2,7 @@ import sys
 import os
 import json
 
-sys.path.append(r"c:\Users\theal\quantasona-mesh\sovereign-27\memory_bus")
+sys.path.append(r"c:\Users\theal\swend-mesh\SUBSTRATE\memory_bus")
 import smf_wrapper
 
 def generate_golden_mid():
@@ -72,7 +72,7 @@ def generate_golden_mid():
     
     smf_blob = smf_wrapper.compile_smf([track0, track1])
     
-    out_dir = r"c:\Users\theal\quantasona-mesh\sovereign-27\timemachine\testdata"
+    out_dir = r"c:\Users\theal\swend-mesh\SUBSTRATE\timemachine\testdata"
     os.makedirs(out_dir, exist_ok=True)
     out_path = os.path.join(out_dir, "test_session_123_memory.mid")
     

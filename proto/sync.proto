@@ -1,5 +1,5 @@
 syntax = "proto3";
-option go_package = "github.com/pqr-info/sovereign-mesh/proto";
+option go_package = "github.com/pqr-info/substrate/proto";
 
 package proto;
 

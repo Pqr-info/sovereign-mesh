@@ -1,5 +1,5 @@
 # ==============================================================================
-# SOVEREIGN-27: REMOTE RPC EXECUTION DISPATCHER
+# SUBSTRATE: REMOTE RPC EXECUTION DISPATCHER
 # Dispatch commands directly to the distributed Termux NPU node (192.168.12.201:8081)
 # Usage: python3 rpc_execute.py "ls -la"
 # ==============================================================================

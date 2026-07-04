@@ -1,5 +1,5 @@
 # ==============================================================================
-# SOVEREIGN-27 NEURAL CORE: GPU-ENABLED TRAINING CONTAINER
+# SUBSTRATE NEURAL CORE: GPU-ENABLED TRAINING CONTAINER
 # Optimized for GCP T4/L4/A100 compute nodes and 300M parameter model training
 # ==============================================================================
 
