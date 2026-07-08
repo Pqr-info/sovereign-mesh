@@ -20,9 +20,18 @@ import sync_pb2_grpc
 PORT = 8085
 
 # Initialize Firebase Admin SDK
-cred = credentials.Certificate(os.path.join(os.path.dirname(SCRIPT_DIR), "fast-web-key.json"))
-firebase_admin.initialize_app(cred)
-db = firestore.client()
+db = None
+try:
+    key_path = os.path.join(os.path.dirname(SCRIPT_DIR), "fast-web-key.json")
+    if os.path.exists(key_path):
+        cred = credentials.Certificate(key_path)
+        firebase_admin.initialize_app(cred)
+        db = firestore.client()
+        print("[WEB-SERVER] 🔥 Firebase Admin initialized successfully.")
+    else:
+        print("[WEB-SERVER] ⚠️ Firebase credentials (fast-web-key.json) not found. Running in offline/mock mode.")
+except Exception as e:
+    print(f"[WEB-SERVER] ⚠️ Firebase initialization failed: {e}. Running in offline/mock mode.")
 DB_PATH = "/home/aellok/sovereign_mesh/agent_pedigree.db"
 
 

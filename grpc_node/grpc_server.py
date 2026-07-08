@@ -999,7 +999,7 @@ class AgentSyncServicer(sync_pb2_grpc.AgentSyncServicer):
             and agent_id != "AGENT-0"
         ):
             if agent_id == self.node_id:
-                agent_id = "AURORA-R9-SERVER"
+                agent_id = self.node_id
             else:
                 agent_id = "LAPTOP-TRAINING-AGENT"
 
@@ -2413,7 +2413,7 @@ def initialize_pedigree_db():
 
 
 def serve():
-    node_id = os.getenv("ANTIGRAVITY_NODE_ID", "AURORA-R9-SERVER")
+    node_id = os.getenv("ANTIGRAVITY_NODE_ID", "ANTIGRAVITY-SERVER")
     port = 1111
 
     # Initialize the 7-Layer Pedigree relational database
